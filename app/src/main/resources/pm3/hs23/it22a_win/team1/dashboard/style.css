@@ -1,0 +1,78 @@
+.menu-button {
+    -fx-background-color: transparent;
+    -fx-alignment: center-left;
+    -fx-background-radius: 0px;
+}
+
+.menu-button:hover {
+    -fx-background-color: #CFD8DC;
+}
+
+.page-title {
+    -fx-font-size: 25px;
+}
+
+.page-container, .page {
+    -fx-background-color: white;
+    -fx-background: white;
+}
+
+.song-list-header {
+    -fx-font-weight: bold;
+}
+
+.borderless-scrollpane {
+    -fx-background-color: transparent;
+}
+
+.borderless-scrollpane .viewport {
+    -fx-background-color: transparent;
+}
+
+.player-button {
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+    -fx-background-radius: 6px;
+}
+
+.player-button:hover {
+    -fx-background-color: rgba(0, 0, 0, 0.2);
+}
+
+.player-slider .track {
+    -fx-background-color: rgba(0, 0, 0, 0.3);
+    -fx-border-style: none;
+    -fx-pref-height: 2px;
+}
+
+.player-slider .thumb {
+    -fx-background-color: white;
+    -fx-border-style: none;
+    -fx-pref-height: 20px;
+    -fx-pref-width: 6px;
+}
+
+.player-volume-slider .track {
+    -fx-background-color: rgba(0, 0, 0, 0.3);
+    -fx-border-style: none;
+    -fx-pref-height: 2px;
+}
+
+.player-volume-slider .thumb {
+    -fx-background-color: white;
+    -fx-border-style: none;
+    -fx-pref-height: 14px;
+    -fx-pref-width: 14px;
+}
+
+.action-button {
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+    -fx-background-radius: 6px;
+}
+
+.action-button:hover {
+    -fx-background-color: rgba(0, 0, 0, 0.2);
+}
+
+.bold-title {
+    -fx-font-size: 18px;
+}

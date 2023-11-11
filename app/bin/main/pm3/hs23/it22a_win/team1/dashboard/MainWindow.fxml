@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<GridPane prefHeight="700.0" prefWidth="1240.0" styleClass="page" xmlns="http://javafx.com/javafx/17.0.2-ea"
+          xmlns:fx="http://javafx.com/fxml/1" fx:controller="pm3.hs23.it22a_win.team1.dashboard.MainWindowController">
+
+    <VBox style="-fx-background-color: #ECEFF1;" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.rowSpan="1">
+        <padding>
+            <Insets bottom="10" top="10"/>
+        </padding>
+
+        <Button graphicTextGap="8" onAction="#showDashboard" prefWidth="Infinity" styleClass="menu-button">
+            <padding>
+                <Insets bottom="6" left="10" top="6"/>
+            </padding>
+            <graphic>
+                <ImageView fitHeight="22" fitWidth="22">
+                    <Image url="@icons/dashboard-layout.png"/>
+                </ImageView>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Dashboard"/>
+            </tooltip>
+        </Button>
+        <Button graphicTextGap="8" onAction="#showCalender" prefWidth="Infinity" styleClass="menu-button">
+            <padding>
+                <Insets bottom="6" left="10" top="6"/>
+            </padding>
+            <graphic>
+                <ImageView fitHeight="22" fitWidth="22">
+                    <Image url="@icons/calendar.png"/>
+                </ImageView>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Kalender"/>
+            </tooltip>
+        </Button>
+        <Button graphicTextGap="8" onAction="#showTodo" prefWidth="Infinity" styleClass="menu-button">
+            <padding>
+                <Insets bottom="6" left="10" top="6"/>
+            </padding>
+            <graphic>
+                <ImageView fitHeight="22" fitWidth="22">
+                    <Image url="@icons/task.png"/>
+                </ImageView>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Todo"/>
+            </tooltip>
+        </Button>
+        <Button graphicTextGap="8" onAction="#showFlashcard" prefWidth="Infinity" styleClass="menu-button">
+            <padding>
+                <Insets bottom="6" left="10" top="6"/>
+            </padding>
+            <graphic>
+                <ImageView fitHeight="22" fitWidth="22">
+                    <Image url="@icons/student-center.png"/>
+                </ImageView>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Lernkartei"/>
+            </tooltip>
+        </Button>
+        <Button graphicTextGap="8" onAction="#showGradeCalculator" prefWidth="Infinity" styleClass="menu-button">
+            <padding>
+                <Insets bottom="6" left="10" top="6"/>
+            </padding>
+            <graphic>
+                <ImageView fitHeight="22" fitWidth="22">
+                    <Image url="@icons/estimates.png"/>
+                </ImageView>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Notenrechner"/>
+            </tooltip>
+        </Button>
+        <Button graphicTextGap="8" onAction="#showFinancialPlanner" prefWidth="Infinity" styleClass="menu-button">
+            <padding>
+                <Insets bottom="6" left="10" top="6"/>
+            </padding>
+            <graphic>
+                <ImageView fitHeight="22" fitWidth="22">
+                    <Image url="@icons/money.png"/>
+                </ImageView>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Finanzplaner"/>
+            </tooltip>
+        </Button>
+        <Button graphicTextGap="8" onAction="#showSettings" prefWidth="Infinity" styleClass="menu-button">
+            <padding>
+                <Insets bottom="6" left="10" top="6"/>
+            </padding>
+            <graphic>
+                <ImageView fitHeight="22" fitWidth="22">
+                    <Image url="@icons/settings.png"/>
+                </ImageView>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Einstellungen"/>
+            </tooltip>
+        </Button>
+    </VBox>
+
+    <StackPane fx:id="pageContainer" styleClass="page-container" GridPane.columnIndex="1" GridPane.rowIndex="0"
+               GridPane.rowSpan="1">
+    </StackPane>
+    <columnConstraints>
+        <ColumnConstraints hgrow="NEVER" prefWidth="40"/>
+        <ColumnConstraints hgrow="ALWAYS"/>
+    </columnConstraints>
+
+    <rowConstraints>
+        <RowConstraints vgrow="ALWAYS"/>
+    </rowConstraints>
+</GridPane>

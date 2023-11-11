@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="700.0" prefWidth="1200.0" styleClass="page" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pm3.hs23.it22a_win.team1.dashboard.gradecalculator.GradeCalculatorController">
+    <VBox fx:id="vBoxContent" spacing="10.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0"
+          AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <Label alignment="CENTER" text="Semester:"/>
+            <ComboBox fx:id="comboSemester" prefHeight="25.0" prefWidth="125.0"/>
+            <Button onAction="#addNewSemester" text="Neues Semester"/>
+            <Button onAction="#removeSemester" text="Semester löschen"/>
+            <Label text="Modulgruppe:"/>
+            <ComboBox fx:id="comboModulgruppe" prefWidth="150.0"/>
+            <Button onAction="#filterApplyButton" text="Filter anwenden"/>
+            <Button onAction="#filterResetButton" text="Filter zurücksetzen"/>
+        </HBox>
+        <TableView fx:id="tableOverview" editable="true" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="nameColumn" prefWidth="250.0" text="Module Name"/>
+                <TableColumn fx:id="shortNameColumn" prefWidth="60.0" text="Kürzel"/>
+                <TableColumn fx:id="creditsColumn" prefWidth="60.0" text="Credits"/>
+                <TableColumn fx:id="moduleGroupColumn" prefWidth="100.0" text="Module Gruppe"/>
+                <TableColumn fx:id="preGradeColumn" text="Vornote"/>
+                <TableColumn fx:id="weightPreliminaryGradeColumn" prefWidth="130.0" text="Gewichtung Vornote"/>
+                <TableColumn fx:id="examGradeColumn" prefWidth="100.0" text="Prüfungsnote"/>
+                <TableColumn fx:id="calculatedGradeColumn" editable="false" prefWidth="100.0" text="Abschluss Note"/>
+            </columns>
+        </TableView>
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <HBox spacing="10" HBox.hgrow="ALWAYS">
+                <Button onAction="#addModuleButton" text="Modul hinzufügen">
+                </Button>
+                <Button onAction="#deleteModuleButton" text="Modul löschen"/>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                <Label text="Durchschnittsnote: "/>
+                <Label fx:id="averageGradeLabel" text="0.00"/>
+            </HBox>
+        </HBox>
+
+    </VBox>
+    </AnchorPane>

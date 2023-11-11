@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="300.0" stylesheets="@ToDoStyle.css" styleClass="popup-pane" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pm3.hs23.it22a_win.team1.dashboard.todo.gui.TaskController">
+   <children>
+      <VBox layoutX="207.0" layoutY="57.0" spacing="10.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+         <children>
+            <TextField fx:id="txtTitle" promptText="Titel">
+               <tooltip>
+                  <Tooltip text="Aufgabentitel angeben" />
+               </tooltip></TextField>
+            <TextArea fx:id="txtDescription" prefHeight="76.0" promptText="Bemerkungen">
+               <tooltip>
+                  <Tooltip text="Zusätzliche Informationen erfassen (optional)" />
+               </tooltip></TextArea>
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="45.0" spacing="30.0">
+               <children>
+                  <DatePicker fx:id="pickerDueDate" prefWidth="100.0" promptText="Fällig bis" showWeekNumbers="true">
+                     <tooltip>
+                        <Tooltip text="Fälligkeitsdatum erfassen (optional)" />
+                     </tooltip></DatePicker>
+                  <HBox alignment="CENTER_RIGHT" spacing="15.0">
+                     <children>
+                        <CheckBox fx:id="checkDueInCalendar" mnemonicParsing="false">
+                           <tooltip>
+                              <Tooltip text="Fälligkeitsdatum im Kalender eintragen" />
+                           </tooltip></CheckBox>
+                        <Label text="in Kalender" />
+                     </children>
+                  </HBox>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="30.0">
+               <children>
+                  <DatePicker fx:id="pickerExecutionDate" prefWidth="100.0" promptText="Erledigen" showWeekNumbers="true">
+                     <tooltip>
+                        <Tooltip text="Datum der geplanten Erledigung erfassen (optional)" />
+                     </tooltip>
+                  </DatePicker>
+                  <HBox alignment="CENTER_RIGHT" spacing="15.0">
+                     <children>
+                        <CheckBox fx:id="checkExecutionInCalendar" mnemonicParsing="false">
+                           <tooltip>
+                              <Tooltip text="Erledigungsdatum im Kalender eintragen" />
+                           </tooltip>
+                        </CheckBox>
+                        <Label text="in Kalender" />
+                     </children>
+                  </HBox>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="170.0" spacing="15.0">
+               <children>
+                  <Label prefWidth="100.0" text="Wiederholen in:" />
+                  <TextField fx:id="txtRepetition" alignment="CENTER_RIGHT" prefWidth="30.0" promptText="0">
+                     <tooltip>
+                        <Tooltip text="Wiederholungsintervall festlegen (optional, leer=0=keine Wiederholung)" />
+                     </tooltip></TextField>
+                  <ChoiceBox fx:id="choiceBoxRepetitionUnit" prefWidth="80.0" value="Tag(en)">
+                     <items>
+                        <FXCollections fx:factory="observableArrayList">
+                           <String fx:value="Tag(en)" />
+                           <String fx:value="Woche(n)" />
+                           <String fx:value="Monat(en)" />
+                           <String fx:value="Jahr(en)" />
+                        </FXCollections>
+                     </items>
+                     <tooltip>
+                        <Tooltip text="Einheit der Wiederholung auswählen" />
+                     </tooltip>
+                  </ChoiceBox>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="135.0" spacing="15.0">
+               <children>
+                  <CheckBox fx:id="checkPriority" mnemonicParsing="false">
+                     <tooltip>
+                        <Tooltip text="Aufgabe priorisieren (Aufgabe erscheint oben in der Liste)" />
+                     </tooltip></CheckBox>
+                  <Label minWidth="35.0" text="Priorität" />
+                  <CheckBox fx:id="checkDailyList" mnemonicParsing="false">
+                     <tooltip>
+                        <Tooltip text="Aufgabe zur Tages-Liste hinzufügen" />
+                     </tooltip></CheckBox>
+                  <Label minWidth="35.0" text="in Tages-Liste" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" layoutX="10.0" layoutY="205.0" spacing="20.0">
+               <children>
+                  <StackPane fx:id="btnCreate" onMouseClicked="#createTask" styleClass="dt-btn-default" focusTraversable="true">
+                     <children>
+                        <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true" />
+                     </children>
+                  </StackPane>
+                  <StackPane fx:id="btnEdit" onMouseClicked="#editTask" styleClass="dt-btn-default" focusTraversable="true">
+                     <children>
+                        <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true" />
+                     </children>
+                  </StackPane>
+                  <StackPane fx:id="btnDelete" onMouseClicked="#deleteTask" styleClass="dt-btn-default" focusTraversable="true">
+                     <children>
+                        <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true" />
+                     </children>
+                  </StackPane>
+                  <StackPane fx:id="btnCancel" onMouseClicked="#cancel" styleClass="dt-btn-default" focusTraversable="true">
+                     <children>
+                        <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true" />
+                     </children>
+                  </StackPane>
+               </children>
+               <VBox.margin>
+                  <Insets top="15.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
