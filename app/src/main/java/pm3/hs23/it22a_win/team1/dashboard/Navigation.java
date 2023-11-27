@@ -38,10 +38,10 @@ public class Navigation {
         DASHBOARD("Dashboard"),
         CALENDAR("Kalender"),
         FINANCE("Finanzplaner"),
-        FLASHCARD("Lernkartei"),
         GRADECALCULATOR("Notenrechner"),
-        TODO("Todo"),
-        SETTINGS("Einstellungen");
+        TODO("ToDo"),
+        SETTINGS("Einstellungen"),
+        COLORSETTINGS("Farbeinstellung");
 
         private final String pageName;
 

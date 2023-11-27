@@ -10,7 +10,7 @@ import java.util.Optional;
 /**
  * This class represents a task collected in a {@link TaskList}. It holds all
  * necessary information about the task.
- * 
+ *
  * @author elmiglor
  * @version 0.1, 2023.10.03
  */
@@ -35,7 +35,7 @@ public class Task {
      * Generates a new instance with the given title. The title can not be null or
      * blank. Sets the creation date and time. Leading and trailing spaces get
      * removed.
-     * 
+     *
      * @param title
      */
     public Task(String title) {
@@ -50,7 +50,7 @@ public class Task {
     /**
      * Modifies the task with the given parameters. Returns false if title is null
      * or blank.
-     * 
+     *
      * @param title
      * @param description
      * @param dueDate
@@ -105,7 +105,7 @@ public class Task {
 
     /**
      * Returns the creation date as an optional.
-     * 
+     *
      * @return optional of creation date
      */
     public Optional<LocalDate> getOptionalCreationDate() {
@@ -114,7 +114,7 @@ public class Task {
 
     /**
      * Returns the due date as an optional.
-     * 
+     *
      * @return optional of due date, or <code>Optional.empty()</code> if due date is
      *         not set
      */
@@ -124,7 +124,7 @@ public class Task {
 
     /**
      * Returns the execution date as an optional.
-     * 
+     *
      * @return optional of execution date, or <code>Optional.empty()</code> if
      *         execution date is not set
      */
@@ -134,7 +134,7 @@ public class Task {
 
     /**
      * Returns the repetition interval as an optional.
-     * 
+     *
      * @return optional of due date, or <code>Optional.empty()</code> if due date is
      *         not set
      */
@@ -144,7 +144,7 @@ public class Task {
 
     /**
      * Returns whether this priority is set.
-     * 
+     *
      * @return true if this task has priority, otherwise false
      */
     public boolean isPriority() {
@@ -160,7 +160,7 @@ public class Task {
 
     /**
      * Returns whether the due date of this task is entered in the calendar.
-     * 
+     *
      * @return true if due date is in calendar, otherwise false
      */
     public boolean isDueInCalendar() {
@@ -169,7 +169,7 @@ public class Task {
 
     /**
      * Returns whether the execution date of this task is entered in the calendar.
-     * 
+     *
      * @return truef if execution date is in calendar, otherwise false
      */
     public boolean isExecutionInCalendar() {
@@ -178,7 +178,7 @@ public class Task {
 
     /**
      * Returns whether this task is marked as done.
-     * 
+     *
      * @return true if task is done, otherwise false
      */
     public boolean isDone() {
@@ -209,7 +209,7 @@ public class Task {
      * Sets the state whether this task is in the {@link DailyTaskList}. The
      * adding/removing to the {@link DailyTaskList} is executed by the
      * {@link TaskList} as it has knowledge of the {@link DailyTaskList}.
-     * 
+     *
      * @param inDailyList the state whether this task has to be in daily list or not
      */
     void setInDailyList(boolean inDailyList) {
@@ -218,7 +218,7 @@ public class Task {
 
     /**
      * Returns whether this task is in {@link DailyTaskList} or not.
-     * 
+     *
      * @return true if is in daily list, otherwise false
      */
     public boolean isInDailyList() {
@@ -247,6 +247,10 @@ public class Task {
 
     boolean isGeneratedInDailyList() {
         return generatedInDailyList;
+    }
+
+    void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
     }
 }
 

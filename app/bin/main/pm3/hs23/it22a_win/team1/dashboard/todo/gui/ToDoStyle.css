@@ -1,5 +1,35 @@
-.at-hbox-add {
-    -fx-background-color: aliceblue;
+* {
+    -fx-color-base1: -my-base1-color;           /*#F4F4F4*/
+    -fx-color-base2: -my-base2-color;           /*white*/
+    -fx-color-base3: -my-base3-color;           /*aliceblue;*/
+    -fx-color-accent1: -my-accent1-color;       /*lightblue*/
+    -fx-color-accent2: -my-accent2-color;       /*lightskyblue*/
+    -fx-color-accent3: -my-accent3-color;       /*cornflowerblue*/
+
+    -fx-base: pink;                             /*für alle elemente, abgestuft, sollte dezent sein*/
+    -fx-accent: green;                          /*selected items, hover over choicebox/calendar grid item*/
+    -fx-default-button: blue;                   /*?*/
+    -fx-focus-color: red;                       /*Rahmen focused scrollpane/listview,calendar*/
+    -fx-faint-focus-color: yellow;              /*Rahmenschatten focused text/button, sollte dezent sein*/
+    -fx-selection-bar-non-focused: lightgreen;  /*selected not focused list,grid calendar*/
+
+
+    -fx-base: -my-base-color;                       /*aliceblue;*/
+    -fx-accent: -my-accent-color;                   /*lightblue;*/
+    -fx-default-button: purple;
+    -fx-focus-color: -my-focus-color;               /*cornflowerblue;*/
+    -fx-faint-focus-color: rgba(240, 248, 255, 0.5);
+    -fx-selection-bar-non-focused: -fx-accent;
+
+    /*
+        -fx-base: #ececec;
+        -fx-accent: #0096C9;
+        -fx-default-button: #ABD8ED;
+        -fx-focus-color: #039ED3;
+        -fx-faint-focus-color: #039ED322;*/
+}
+
+.hbox-task {
     -fx-opacity: 1;
     -fx-alignment: center;
     -fx-background-insets: 0 4 0 4;
@@ -8,39 +38,53 @@
     -fx-fill-height: true;
 }
 
-.at-hbox-add:hover {
-    -fx-background-color: lightblue;
+.at-hbox-add {
+    -fx-background-color: -fx-base;
+}
+
+.at-hbox-add:hover, .at-hbox-add:focused {
+    -fx-background-color: -fx-accent;
 }
 
 .dt-hbox-base {
-    -fx-background-color: white;
-    -fx-opacity: 1;
-    -fx-alignment: center;
-    -fx-background-insets: 0 4 0 4;
-    -fx-spacing: 12;
-    -fx-padding: 0 10 0 10;
-    -fx-fill-height: true;
+    -fx-background-color: white; /*change to color of given palette;*/
 }
 
 .dt-hbox-base:hover {
-    -fx-background-color: aliceblue;
+    -fx-background-color: -fx-base;
 }
 
-.dt-btn-default {
+.btn-default {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
     -fx-border-width: 1;
+
+    -fx-background-color: -fx-base;
+    -fx-border-color: -fx-focus-color;
+}
+
+.btn-default:hover, .btn-default:focused {
+    -fx-background-color: -fx-hover-base;
+}
+
+.btn-active, #btn-active {
+    -fx-background-color: -fx-accent;
+}
+
+.btn-active:hover {
+    -fx-background-color:  ladder(
+        -fx-accent,
+        derive(-fx-accent,20%) 20%,
+        derive(-fx-accent,30%) 35%,
+        derive(-fx-accent,40%) 50%
+    );
+}
+
+.btn-task {
     -fx-min-width: 24;
     -fx-min-height: 24;
     -fx-max-width: 24;
     -fx-max-height: 24;
-    -fx-background-radius: 10;
-    -fx-border-radius: 10;
-    
-    -fx-background-color: aliceblue;
-    -fx-border-color: rgba(0, 0, 255, 0.5);
-}
-
-.dt-btn-default:hover, .dt-btn-default:focused {
-    -fx-background-color: lightblue;
 }
 
 .dt-stackpane-priority {
@@ -49,27 +93,9 @@
 }
 
 .dt-stackpane-priority:hover {
-    -fx-background-color: lightblue;
-    -fx-border-color: rgba(0, 0, 255, 0.5);
+    -fx-background-color: -fx-hover-base;
+    -fx-border-color: -fx-focus-color;
 }
-
-/*.dt-stackpane-done {
-    -fx-background-color: aliceblue;
-    -fx-border-color: rgba(0, 0, 255, 0.5);
-}
-
-.dt-stackpane-done:hover {
-    -fx-background-color: lightblue;
-}
-
-.dt-stackpane-add-daily-list {
-    -fx-background-color: aliceblue;
-    -fx-border-color: rgba(0, 0, 255, 0.5);
-}
-
-.dt-stackpane-add-daily-list:hover {
-    -fx-background-color: lightblue;
-}*/
 
 .dt-lbl-task {
     -fx-min-width: 130;
@@ -82,14 +108,6 @@
     -fx-pref-width: 60;
 }
 
-.dt-btn-active {
-    -fx-background-color: lightseagreen;
-}
-
-.dt-btn-active:hover {
-    -fx-background-color: lightgreen;
-}
-
 .dt-lbl-done .text {
     -fx-strikethrough: true;
 }
@@ -99,5 +117,86 @@
 }
 
 .popup-pane {
-    -fx-border-color: rgba(0, 0, 255, 0.5);
+    -fx-border-color: -fx-focus-color;
 }
+
+.blurry-pane {
+    -fx-background-color: rgba(0,0,0,0.4);
+}
+/*
+.list-view, .scroll-pane {
+    -fx-background-color: -my-accent3-color;
+}
+
+.list-view:focused, .scroll-pane:focused {
+    -fx-background-color: -my-accent3-color;
+    -fx-background-insets: 0, 1;
+    -fx-padding: 1;
+}
+
+.indexed-cell:odd {
+    -fx-background-color: -my-base1-color;
+}
+
+.cell:hover {
+    -fx-background-color: -my-base3-color;
+}
+
+.cell:selected {
+    -fx-background-color: -my-accent1-color;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: -my-base1-color;
+}*/
+.tasks-cont .viewport {
+    -fx-background-color: -fx-control-inner-background-alt;
+}
+
+.list-cont, .tasks-cont, .task-cont {
+    -fx-background-color: -fx-faint-focus-color, -fx-focus-color, -fx-control-inner-background;
+    -fx-background-insets: -1.4, 0, 1;
+    -fx-background-radius: 2, 0, 0;
+}
+/*
+.dialog-pane {
+    -fx-background-color: -fx-control-inner-background;
+    -fx-background-radius: 10;
+    -fx-border-color: -fx-focus-color;
+    -fx-border-radius: 10;
+}*/
+
+.dialog-pane {
+    -fx-background-color: -fx-faint-focus-color, -fx-focus-color, -fx-control-inner-background;
+    -fx-background-insets: 0, 1, 2;
+    -fx-background-radius: 11, 10, 9;
+    -fx-pref-width: 240;
+    -fx-max-width: 240;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: -fx-focus-color, -fx-base;
+    -fx-background-insets: 2, 2 2 3 2;
+    -fx-background-radius: 10 10 0 0 , 9 9 0 0;
+}
+
+.cont-default-border {
+    -fx-background-color: -fx-faint-focus-color, -fx-focus-color, -fx-control-inner-background;
+    -fx-background-insets: -1.4, -0.3, 1;
+    -fx-background-radius: 2, 0, 0;
+}
+
+.button {
+    -fx-background-radius: 10;
+    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
+    -fx-background-radius: 12 12 11 11, 11, 10, 9;
+}
+
+.cell:hover {
+    -fx-background-color: -fx-base;
+}
+
+/*
+.cell:selected {
+    -fx-background-color: -my-accent1-color;
+}  */

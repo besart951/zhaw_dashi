@@ -4,116 +4,120 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<GridPane prefHeight="700.0" prefWidth="1240.0" styleClass="page" xmlns="http://javafx.com/javafx/17.0.2-ea"
-          xmlns:fx="http://javafx.com/fxml/1" fx:controller="pm3.hs23.it22a_win.team1.dashboard.MainWindowController">
 
-    <VBox style="-fx-background-color: #ECEFF1;" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.rowSpan="1">
-        <padding>
-            <Insets bottom="10" top="10"/>
-        </padding>
+<GridPane prefHeight="700.0" prefWidth="1240.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="pm3.hs23.it22a_win.team1.dashboard.MainWindowController">
+    <VBox GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.rowSpan="1">
+        <VBox alignment="TOP_CENTER"   VBox.vgrow="ALWAYS">
+            <padding>
+                <Insets bottom="10" top="10" />
+            </padding>
 
-        <Button graphicTextGap="8" onAction="#showDashboard" prefWidth="Infinity" styleClass="menu-button">
-            <padding>
-                <Insets bottom="6" left="10" top="6"/>
-            </padding>
-            <graphic>
-                <ImageView fitHeight="22" fitWidth="22">
-                    <Image url="@icons/dashboard-layout.png"/>
-                </ImageView>
-            </graphic>
-            <tooltip>
-                <Tooltip text="Dashboard"/>
-            </tooltip>
-        </Button>
-        <Button graphicTextGap="8" onAction="#showCalender" prefWidth="Infinity" styleClass="menu-button">
-            <padding>
-                <Insets bottom="6" left="10" top="6"/>
-            </padding>
-            <graphic>
-                <ImageView fitHeight="22" fitWidth="22">
-                    <Image url="@icons/calendar.png"/>
-                </ImageView>
-            </graphic>
-            <tooltip>
-                <Tooltip text="Kalender"/>
-            </tooltip>
-        </Button>
-        <Button graphicTextGap="8" onAction="#showTodo" prefWidth="Infinity" styleClass="menu-button">
-            <padding>
-                <Insets bottom="6" left="10" top="6"/>
-            </padding>
-            <graphic>
-                <ImageView fitHeight="22" fitWidth="22">
-                    <Image url="@icons/task.png"/>
-                </ImageView>
-            </graphic>
-            <tooltip>
-                <Tooltip text="Todo"/>
-            </tooltip>
-        </Button>
-        <Button graphicTextGap="8" onAction="#showFlashcard" prefWidth="Infinity" styleClass="menu-button">
-            <padding>
-                <Insets bottom="6" left="10" top="6"/>
-            </padding>
-            <graphic>
-                <ImageView fitHeight="22" fitWidth="22">
-                    <Image url="@icons/student-center.png"/>
-                </ImageView>
-            </graphic>
-            <tooltip>
-                <Tooltip text="Lernkartei"/>
-            </tooltip>
-        </Button>
-        <Button graphicTextGap="8" onAction="#showGradeCalculator" prefWidth="Infinity" styleClass="menu-button">
-            <padding>
-                <Insets bottom="6" left="10" top="6"/>
-            </padding>
-            <graphic>
-                <ImageView fitHeight="22" fitWidth="22">
-                    <Image url="@icons/estimates.png"/>
-                </ImageView>
-            </graphic>
-            <tooltip>
-                <Tooltip text="Notenrechner"/>
-            </tooltip>
-        </Button>
-        <Button graphicTextGap="8" onAction="#showFinancialPlanner" prefWidth="Infinity" styleClass="menu-button">
-            <padding>
-                <Insets bottom="6" left="10" top="6"/>
-            </padding>
-            <graphic>
-                <ImageView fitHeight="22" fitWidth="22">
-                    <Image url="@icons/money.png"/>
-                </ImageView>
-            </graphic>
-            <tooltip>
-                <Tooltip text="Finanzplaner"/>
-            </tooltip>
-        </Button>
-        <Button graphicTextGap="8" onAction="#showSettings" prefWidth="Infinity" styleClass="menu-button">
-            <padding>
-                <Insets bottom="6" left="10" top="6"/>
-            </padding>
-            <graphic>
-                <ImageView fitHeight="22" fitWidth="22">
-                    <Image url="@icons/settings.png"/>
-                </ImageView>
-            </graphic>
-            <tooltip>
-                <Tooltip text="Einstellungen"/>
-            </tooltip>
-        </Button>
+            <Button alignment="CENTER" graphicTextGap="8" onAction="#showDashboard" prefWidth="Infinity" styleClass="menu-button">
+                <padding>
+                    <Insets bottom="4" left="4" top="4" right="4" />
+                </padding>
+                <graphic>
+                    <ImageView fitHeight="22" fitWidth="22">
+                        <Image url="@icons/dashboard-layout.png" />
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Dashboard" />
+                </tooltip>
+            </Button>
+            <Button alignment="CENTER" graphicTextGap="8" onAction="#showCalender" prefWidth="Infinity" styleClass="menu-button">
+                <padding>
+                    <Insets bottom="4" left="4" top="4" right="4" />
+                </padding>
+                <graphic>
+                    <ImageView fitHeight="22" fitWidth="22">
+                        <Image url="@icons/calendar.png" />
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Kalender" />
+                </tooltip>
+            </Button>
+            <Button alignment="CENTER" graphicTextGap="8" onAction="#showTodo" prefWidth="Infinity" styleClass="menu-button">
+                <padding>
+                    <Insets bottom="4" left="4" top="4" right="4" />
+                </padding>
+                <graphic>
+                    <ImageView fitHeight="22" fitWidth="22">
+                        <Image url="@icons/task.png" />
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Todo" />
+                </tooltip>
+            </Button>
+            <Button alignment="CENTER" graphicTextGap="8" onAction="#showGradeCalculator" prefWidth="Infinity" styleClass="menu-button">
+                <padding>
+                    <Insets bottom="4" left="4" top="4" right="4" />
+                </padding>
+                <graphic>
+                    <ImageView fitHeight="22" fitWidth="22">
+                        <Image url="@icons/estimates.png" />
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Notenrechner" />
+                </tooltip>
+            </Button>
+            <Button alignment="CENTER" graphicTextGap="8" onAction="#showFinancialPlanner" prefWidth="Infinity" styleClass="menu-button">
+                <padding>
+                    <Insets bottom="4" left="4" top="4" right="4" />
+                </padding>
+                <graphic>
+                    <ImageView fitHeight="22" fitWidth="22">
+                        <Image url="@icons/money.png" />
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Finanzplaner" />
+                </tooltip>
+            </Button>
+            <Button alignment="CENTER" graphicTextGap="8" onAction="#showSettings" prefWidth="Infinity" styleClass="menu-button">
+                <padding>
+                    <Insets bottom="4" left="4" top="4" right="4" />
+                </padding>
+                <graphic>
+                    <ImageView fitHeight="22" fitWidth="22">
+                        <Image url="@icons/settings.png" />
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Einstellungen" />
+                </tooltip>
+            </Button>
+        </VBox>
+        <VBox alignment="BOTTOM_CENTER" VBox.vgrow="ALWAYS">
+            <Button alignment="CENTER" graphicTextGap="8" onAction="#showThemeSettings" prefWidth="Infinity" styleClass="menu-button">
+                <padding>
+                    <Insets bottom="4" left="4" top="4" right="4" />
+                </padding>
+                <graphic>
+                    <ImageView fitHeight="22" fitWidth="22">
+                        <Image url="@icons/coloreRole.png" />
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Design Einstellung" />
+                </tooltip>
+            </Button>
+        </VBox>
+
     </VBox>
 
-    <StackPane fx:id="pageContainer" styleClass="page-container" GridPane.columnIndex="1" GridPane.rowIndex="0"
-               GridPane.rowSpan="1">
+    <StackPane fx:id="pageContainer" styleClass="page-container" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.rowSpan="1">
     </StackPane>
     <columnConstraints>
-        <ColumnConstraints hgrow="NEVER" prefWidth="40"/>
-        <ColumnConstraints hgrow="ALWAYS"/>
+        <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40"/>
+        <ColumnConstraints hgrow="ALWAYS" />
     </columnConstraints>
 
     <rowConstraints>
-        <RowConstraints vgrow="ALWAYS"/>
+        <RowConstraints vgrow="ALWAYS" />
     </rowConstraints>
 </GridPane>

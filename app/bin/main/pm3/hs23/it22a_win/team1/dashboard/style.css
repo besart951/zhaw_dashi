@@ -76,3 +76,103 @@
 .bold-title {
     -fx-font-size: 18px;
 }
+
+.at-hbox-add {
+    -fx-background-color: aliceblue;
+    -fx-opacity: 1;
+    -fx-alignment: center;
+    -fx-background-insets: 0 4 0 4;
+    -fx-spacing: 12;
+    -fx-padding: 0 10 0 10;
+    -fx-fill-height: true;
+}
+
+.at-hbox-add:hover {
+    -fx-background-color: lightblue;
+}
+
+.dt-hbox-base {
+    -fx-background-color: white;
+    -fx-opacity: 1;
+    -fx-alignment: center;
+    -fx-background-insets: 0 4 0 4;
+    -fx-spacing: 12;
+    -fx-padding: 0 10 0 10;
+    -fx-fill-height: true;
+}
+
+.dt-hbox-base:hover {
+    -fx-background-color: aliceblue;
+}
+
+.dt-btn-default {
+    -fx-border-width: 1;
+    -fx-min-width: 24;
+    -fx-min-height: 24;
+    -fx-max-width: 24;
+    -fx-max-height: 24;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+
+    -fx-background-color: aliceblue;
+    -fx-border-color: rgba(0, 0, 255, 0.5);
+}
+
+.dt-btn-default:hover, .dt-btn-default:focused {
+    -fx-background-color: lightblue;
+}
+
+.dt-stackpane-priority {
+    -fx-background-color: none;
+    -fx-border-color: none;
+}
+
+.dt-stackpane-priority:hover {
+    -fx-background-color: lightblue;
+    -fx-border-color: rgba(0, 0, 255, 0.5);
+}
+
+/*.dt-stackpane-done {
+    -fx-background-color: aliceblue;
+    -fx-border-color: rgba(0, 0, 255, 0.5);
+}
+
+.dt-stackpane-done:hover {
+    -fx-background-color: lightblue;
+}
+
+.dt-stackpane-add-daily-list {
+    -fx-background-color: aliceblue;
+    -fx-border-color: rgba(0, 0, 255, 0.5);
+}
+
+.dt-stackpane-add-daily-list:hover {
+    -fx-background-color: lightblue;
+}*/
+
+.dt-lbl-task {
+    -fx-min-width: 130;
+    -fx-pref-width: 158;
+    -fx-wrap-text: true;
+}
+
+.dt-lbl-sorting {
+    -fx-min-width: 60;
+    -fx-pref-width: 60;
+}
+
+.dt-btn-active {
+    -fx-background-color: lightseagreen;
+}
+
+.dt-btn-active:hover {
+    -fx-background-color: lightgreen;
+}
+
+.dt-lbl-done .text {
+    -fx-strikethrough: true;
+}
+
+.text-input, .text-input:focused {
+    -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);
+}

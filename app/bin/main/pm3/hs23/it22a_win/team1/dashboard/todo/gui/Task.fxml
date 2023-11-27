@@ -10,13 +10,16 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="300.0" stylesheets="@ToDoStyle.css" styleClass="popup-pane" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pm3.hs23.it22a_win.team1.dashboard.todo.gui.TaskController">
+<AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="300.0" prefWidth="300.0" stylesheets="@ToDoStyle.css" styleClass="cont-default-border"
+            xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pm3.hs23.it22a_win.team1.dashboard.todo.gui.TaskController">
    <children>
       <VBox layoutX="207.0" layoutY="57.0" spacing="10.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
          <children>
@@ -100,26 +103,34 @@
                   <Label minWidth="35.0" text="in Tages-Liste" />
                </children>
             </HBox>
-            <HBox alignment="CENTER" layoutX="10.0" layoutY="205.0" spacing="20.0">
+            <HBox fx:id="btnContainer" alignment="CENTER" layoutX="10.0" layoutY="205.0" spacing="20.0">
                <children>
-                  <StackPane fx:id="btnCreate" onMouseClicked="#createTask" styleClass="dt-btn-default" focusTraversable="true">
+                  <StackPane fx:id="btnCreate" onMouseClicked="#createTask" styleClass="btn-default, btn-task" focusTraversable="true">
                      <children>
-                        <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                           <Image url="@images/plus_big.png"/>
+                        </ImageView>
                      </children>
                   </StackPane>
-                  <StackPane fx:id="btnEdit" onMouseClicked="#editTask" styleClass="dt-btn-default" focusTraversable="true">
+                  <StackPane fx:id="btnEdit" onMouseClicked="#editTask" styleClass="btn-default, btn-task" focusTraversable="true">
                      <children>
-                        <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                           <Image url="@images/edit_big.png"/>
+                        </ImageView>
                      </children>
                   </StackPane>
-                  <StackPane fx:id="btnDelete" onMouseClicked="#deleteTask" styleClass="dt-btn-default" focusTraversable="true">
+                  <StackPane fx:id="btnDelete" onMouseClicked="#deleteTask" styleClass="btn-default, btn-task" focusTraversable="true">
                      <children>
-                        <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                           <Image url="@images/delete_big.png"/>
+                        </ImageView>
                      </children>
                   </StackPane>
-                  <StackPane fx:id="btnCancel" onMouseClicked="#cancel" styleClass="dt-btn-default" focusTraversable="true">
+                  <StackPane fx:id="btnCancel" onMouseClicked="#cancel" styleClass="btn-default, btn-task" focusTraversable="true">
                      <children>
-                        <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                           <Image url="@images/cancel_big.png"/>
+                        </ImageView>
                      </children>
                   </StackPane>
                </children>

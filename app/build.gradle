@@ -34,8 +34,25 @@ dependencies {
 
   // This dependency is used by the application.
   implementation 'com.google.guava:guava:32.1.1-jre'
-  // atlantaFX -> adds nice CSS overlays and some additional controls for JavaFX
-  implementation 'io.github.mkpaz:atlantafx-base:2.0.1'
+
+    // atlantaFX -> adds nice CSS overlays and some additional controls for JavaFX
+    implementation 'io.github.mkpaz:atlantafx-base:2.0.1'
+    implementation 'org.controlsfx:controlsfx:11.2.0'
+    // https://mvnrepository.com/artifact/com.jfoenix/jfoenix
+    implementation group: 'com.jfoenix', name: 'jfoenix', version: '9.0.1'
+    implementation group: 'org.kordamp.ikonli', name:'ikonli-javafx', version: '12.3.1'
+    implementation 'org.kordamp.ikonli:ikonli-materialdesign2-pack:12.3.1'
+
+
+    //JSON Library
+  implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.0-rc1'
+  // For LocalDate in ToDoDecorator
+  implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.16.0'
+  // https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
+  implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.0'
+
+
+
 }
 
 test {
@@ -46,7 +63,7 @@ test {
 }
 
 javafx {
-  version = '17.0.6'
+  version = '21.0.1'
   modules = ['javafx.controls', 'javafx.fxml', 'javafx.media']
 }
 

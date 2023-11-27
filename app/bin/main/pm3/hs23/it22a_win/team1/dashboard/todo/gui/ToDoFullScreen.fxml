@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="root" prefHeight="700.0" prefWidth="1200.0" stylesheets="@ToDoStyle.css" xmlns="http://javafx.com/javafx/19"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="pm3.hs23.it22a_win.team1.dashboard.todo.gui.ToDoFullScreenController">
+   <children>
+      <HBox prefHeight="100.0" prefWidth="200.0" spacing="80.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="240.0" spacing="20.0">
+               <children>
+                  <Label text="Meine To-Do-Liste(n)">
+                     <font>
+                        <Font size="20.0" />
+                     </font></Label>
+                  <ListView fx:id="containerListOfTaskLists" prefHeight="400.0" prefWidth="200.0" styleClass="list-cont" VBox.vgrow="ALWAYS" />
+                  <Button mnemonicParsing="false" onAction="#deleteList" prefHeight="40.0" prefWidth="150.0" text="Liste löschen" >
+                     <tooltip>
+                        <Tooltip text="ausgewählte To-Do-Liste dauerhaft löschen" />
+                     </tooltip>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#addListPopUp" prefHeight="40.0" prefWidth="150.0" text="neue Liste erstellen" >
+                     <tooltip>
+                        <Tooltip text="neue To-Do-Liste erstellen" />
+                     </tooltip>
+                  </Button>
+               </children>
+            </VBox>
+            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="400.0" spacing="20.0">
+               <children>
+                  <Label text="Meine Aufgabe(n)">
+                     <font>
+                        <Font size="20.0" />
+                     </font></Label>
+                  <Label text="Liste sortieren nach:" />
+                  <ChoiceBox fx:id="choiceBoxSorting" prefWidth="200.0" >
+                     <tooltip>
+                        <Tooltip text="Sortierung auswählen" />
+                     </tooltip>
+                  </ChoiceBox>
+                  <StackPane fx:id="containerAllTasks" prefHeight="470.0" prefWidth="400.0" />
+               </children>
+            </VBox>
+            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="300.0" spacing="20.0">
+               <children>
+                  <Label text="Aufgabe">
+                     <font>
+                        <Font size="20.0" />
+                     </font></Label>
+                  <VBox alignment="TOP_CENTER" prefWidth="100.0" spacing="20.0" styleClass="task-cont">
+                     <children>
+                        <StackPane fx:id="containerTask" prefHeight="300.0" prefWidth="300.0">
+                           <VBox.margin>
+                              <Insets bottom="-20.0" />
+                           </VBox.margin></StackPane>
+                        <Button fx:id="btnEdit" mnemonicParsing="false" onAction="#modifyTask" prefHeight="40.0" prefWidth="150.0" text="Änderungen speichern" >
+                           <tooltip>
+                              <Tooltip text="gemachte Änderungen der Aufgabe speichern" />
+                           </tooltip>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#deleteTask" prefHeight="40.0" prefWidth="150.0" text="Aufgabe löschen" >
+                           <tooltip>
+                              <Tooltip text="ausgewählte Aufgabe dauerhaft löschen" />
+                           </tooltip>
+                        </Button>
+                     </children>
+                     <padding>
+                        <Insets bottom="20.0" />
+                     </padding>
+                  </VBox>
+                  <Button fx:id="btnEmptyTask" mnemonicParsing="false" onAction="#provideEmptyTask" prefHeight="40.0" prefWidth="150.0" text="neue Aufgabe erstellen" >
+                     <tooltip>
+                        <Tooltip text="neue Aufgabe in leerer Eingabemaske erfassen" />
+                     </tooltip>
+                  </Button>
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
+         </padding>
+      </HBox>
+      <StackPane fx:id="blurryPane" prefHeight="150.0" prefWidth="200.0" styleClass="blurry-pane" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <TextField fx:id="inputField" alignment="CENTER" maxHeight="100.0" maxWidth="800.0" onAction="#createList" onKeyPressed="#inputFieldKeyPressed" prefHeight="100.0" prefWidth="800.0" promptText="Listenname eingeben">
+               <font>
+                  <Font size="44.0" />
+               </font>
+            </TextField>
+         </children>
+      </StackPane>
+   </children>
+</AnchorPane>

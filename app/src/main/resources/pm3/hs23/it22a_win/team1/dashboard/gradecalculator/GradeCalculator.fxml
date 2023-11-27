@@ -1,44 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import org.controlsfx.control.*?>
+<?import org.kordamp.ikonli.javafx.*?>
+<?import atlantafx.base.theme.Theme.*?>
 
-<AnchorPane prefHeight="700.0" prefWidth="1200.0" styleClass="page" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pm3.hs23.it22a_win.team1.dashboard.gradecalculator.GradeCalculatorController">
-    <VBox fx:id="vBoxContent" spacing="10.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0"
-          AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+<StackPane fx:id="viewWidgetContent" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pm3.hs23.it22a_win.team1.dashboard.gradecalculator.GradeCalculatorController">
+    <VBox prefWidth="Infinity" prefHeight="Infinity" fx:id="vBoxContent" spacing="10.0">
         <HBox alignment="CENTER_LEFT" spacing="10.0">
-            <Label alignment="CENTER" text="Semester:"/>
-            <ComboBox fx:id="comboSemester" prefHeight="25.0" prefWidth="125.0"/>
-            <Button onAction="#addNewSemester" text="Neues Semester"/>
-            <Button onAction="#removeSemester" text="Semester löschen"/>
-            <Label text="Modulgruppe:"/>
-            <ComboBox fx:id="comboModulgruppe" prefWidth="150.0"/>
-            <Button onAction="#filterApplyButton" text="Filter anwenden"/>
-            <Button onAction="#filterResetButton" text="Filter zurücksetzen"/>
+            <Button minWidth="180" onAction="#addNewSemester" styleClass="accent, rounded" text="Semester erstellen">
+                <graphic>
+                    <FontIcon iconLiteral="mdi2t-table-large-plus" />
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Semester erstellen" />
+                </tooltip>
+            </Button>
+            <Button minWidth="180" onAction="#removeSemesterButton" styleClass="rounded" text="Semester löschen">
+                <graphic>
+                    <FontIcon iconLiteral="mdi2t-table-large-remove" />
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Semester löschen" />
+                </tooltip>
+            </Button>
+            <Label prefWidth="90.0" text="Semester:" />
+            <ComboBox minWidth="180" maxWidth="180" fx:id="comboSemester" prefHeight="25.0" prefWidth="125.0" />
+            <Button minWidth="180" onAction="#filterApplyButton" styleClass="rounded" text="Filter anwenden">
+                <graphic>
+                    <FontIcon iconLiteral="mdi2f-filter-outline" />
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Filter anwenden" />
+                </tooltip>
+            </Button>
+            <Button minWidth="180" onAction="#filterResetButton" styleClass="rounded" text="Filter zurücksetzen">
+                <graphic>
+                    <FontIcon iconLiteral="mdi2f-filter-remove-outline" />
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Filter zurücksetzen" />
+                </tooltip>
+            </Button>
         </HBox>
-        <TableView fx:id="tableOverview" editable="true" VBox.vgrow="ALWAYS">
-            <columns>
-                <TableColumn fx:id="nameColumn" prefWidth="250.0" text="Module Name"/>
-                <TableColumn fx:id="shortNameColumn" prefWidth="60.0" text="Kürzel"/>
-                <TableColumn fx:id="creditsColumn" prefWidth="60.0" text="Credits"/>
-                <TableColumn fx:id="moduleGroupColumn" prefWidth="100.0" text="Module Gruppe"/>
-                <TableColumn fx:id="preGradeColumn" text="Vornote"/>
-                <TableColumn fx:id="weightPreliminaryGradeColumn" prefWidth="130.0" text="Gewichtung Vornote"/>
-                <TableColumn fx:id="examGradeColumn" prefWidth="100.0" text="Prüfungsnote"/>
-                <TableColumn fx:id="calculatedGradeColumn" editable="false" prefWidth="100.0" text="Abschluss Note"/>
-            </columns>
-        </TableView>
+        <!-- ADD TABLEVIEW in VBOX -->
         <HBox alignment="CENTER_LEFT" spacing="10.0">
-            <HBox spacing="10" HBox.hgrow="ALWAYS">
-                <Button onAction="#addModuleButton" text="Modul hinzufügen">
+            <HBox alignment="CENTER_LEFT" spacing="10" HBox.hgrow="ALWAYS">
+                <Button minWidth="180" onAction="#addModuleButton" styleClass="rounded" text="Modul hinzufügen">
+                    <graphic>
+                        <FontIcon iconLiteral="mdi2t-table-row-plus-after" />
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="Modul hinzufügen" />
+                    </tooltip>
                 </Button>
-                <Button onAction="#deleteModuleButton" text="Modul löschen"/>
+                <Button minWidth="180" onAction="#deleteModuleButton" styleClass="rounded" text="Modul löschen">
+                    <graphic>
+                        <FontIcon iconLiteral="mdi2t-table-row-remove" />
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="Modul löschen" />
+                    </tooltip>
+                </Button>
+                <Label prefWidth="90.0" text="Modulgruppe:" />
+                <CheckComboBox minWidth="180" maxWidth="180" fx:id="comboModulgruppe" prefWidth="150.0" />
             </HBox>
-            <HBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
-                <Label text="Durchschnittsnote: "/>
-                <Label fx:id="averageGradeLabel" text="0.00"/>
+            <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                <HBox alignment="CENTER" style="-fx-background-color: -color-success-subtle; -fx-background-radius: 15; -fx-border-radius: 15;">
+                    <Label text="Durchschnittsnote: " />
+                    <Label fx:id="averageGradeLabel" styleClass="text-caption" text="0.00" />
+                    <padding>
+                        <Insets bottom="5" left="5" right="5" top="5" />
+                    </padding>
+                </HBox>
             </HBox>
         </HBox>
-
+      <StackPane.margin>
+         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+      </StackPane.margin>
     </VBox>
-    </AnchorPane>
+    </StackPane>

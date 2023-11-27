@@ -19,16 +19,19 @@ public class FactoryGradeHandler {
     public FactoryGradeHandler() {
     }
 
-    /*
+    /**
      * Creates a new module with dummy data.
      */
     public Module createModule() {
         return new Module(nameDummy + "1", shortNameDummy, creditsDummy, preliminaryGradeDummy, examGradeDummy,
-                weightPremDummy);
+            weightPremDummy);
     }
 
-    /*
-     * Creates a new semester with dummy data.
+    /**
+     * Creates a new Semester with specified description.
+     *
+     * @param description the description of the semester
+     * @return new semester
      */
     public Semester createSemester(String description) {
         return new Semester(description);

@@ -11,7 +11,7 @@ import java.util.Optional;
  * This class handles all manipulations of a list of {@link Task}.
  * 
  * @author elmiglor
- * @version 2023-10-27
+ * @version 2023-11-12
  */
 public class TaskList {
     private String nameList;
@@ -68,7 +68,7 @@ public class TaskList {
      * @param inDailyList
      * @return true if task was generated successfully
      */
-    public boolean addTask(String title, String description, Optional<LocalDate> dueDate, boolean dueInCalendar,
+    public Task addTask(String title, String description, Optional<LocalDate> dueDate, boolean dueInCalendar,
             Optional<LocalDate> executionDate, boolean executionInCalendar, Optional<Period> repetitionInterval,
             boolean priority, boolean inDailyList) {
         try {
@@ -79,19 +79,32 @@ public class TaskList {
             }
             if (!modifyTask(task, title, description, dueDate, dueInCalendar, executionDate, executionInCalendar,
                     repetitionInterval, priority, inDailyList)) {
-                return false;
+                return null;
             }
             if (!allTasks.add(task)) {
-                return false;
+                return null;
             }
             // TODO set custom nr correctly
             SortingType sortingType = getCurrentSorting();
             moveTaskToPosition(task, 0);
             setCurrentSorting(sortingType);
+            return task;
         } catch (Exception e) {
-            return false;
+            return null;
         }
-        return true;
+    }
+
+    /**
+     * Adds a {@link Task} to this {@link TaskList}.
+     * 
+     * @param task the task to be added
+     * @return true if successfully added to task list
+     */
+    public boolean addTask(Task task) {
+        if (!allTasks.contains(task)) {
+            return allTasks.add(task);
+        }
+        return false;
     }
 
     /**

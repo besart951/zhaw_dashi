@@ -1,21 +1,23 @@
 package pm3.hs23.it22a_win.team1.dashboard;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import pm3.hs23.it22a_win.team1.dashboard.calendar.CalendarController;
+import pm3.hs23.it22a_win.team1.dashboard.calendar.CalendarData;
 import pm3.hs23.it22a_win.team1.dashboard.financialplanner.FinancialPlannerController;
 import pm3.hs23.it22a_win.team1.dashboard.financialplanner.FinancialPlannerData;
-import pm3.hs23.it22a_win.team1.dashboard.flashcard.FlashcardController;
-import pm3.hs23.it22a_win.team1.dashboard.flashcard.FlashcardModel;
 import pm3.hs23.it22a_win.team1.dashboard.gradecalculator.GradeCalculatorController;
 import pm3.hs23.it22a_win.team1.dashboard.gradecalculator.GradeCalculatorData;
-import pm3.hs23.it22a_win.team1.dashboard.gradecalculator.GradeCalculatorSmallController;
-import pm3.hs23.it22a_win.team1.dashboard.todo.TodoController;
-import pm3.hs23.it22a_win.team1.dashboard.todo.TodoModel;
+import pm3.hs23.it22a_win.team1.dashboard.todo.ToDoTestLoad;
+import pm3.hs23.it22a_win.team1.dashboard.todo.gui.ToDoFullScreenController;
+import pm3.hs23.it22a_win.team1.dashboard.todo.gui.ToDoDecorator;
 
 import java.io.IOException;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -39,9 +41,10 @@ public class MainWindowController {
      */
     private FinancialPlannerController financialPlannerController;
     private GradeCalculatorController gradeCalculatorController;
-    private GradeCalculatorSmallController gradeCalculatorSmallController;
-    private FlashcardController flashcardController;
-    private TodoController todoController;
+    private CalendarController calendarController;
+    private ToDoFullScreenController todoController;
+    private DashboardController dashboardController;
+    private ColorSettingsController colorSettingsController;
     private Navigation navigation;
 
 
@@ -61,12 +64,12 @@ public class MainWindowController {
     }
 
 
-    public void setModels(FinancialPlannerData financialPlannerData, GradeCalculatorData gradeCalculatorData, FlashcardModel flashcardModel, TodoModel todoModel,
-                          Navigation navigation) {
+    public void setModels(FinancialPlannerData financialPlannerData, GradeCalculatorData gradeCalculatorData, CalendarData calendarData, ToDoDecorator todoData,
+                          Navigation navigation, ColorSettingsManager colorSettingsManager) {
         Objects.requireNonNull(financialPlannerData);
         Objects.requireNonNull(gradeCalculatorData);
-        Objects.requireNonNull(flashcardModel);
-        Objects.requireNonNull(todoModel);
+        Objects.requireNonNull(calendarData);
+        Objects.requireNonNull(todoData);
         Objects.requireNonNull(navigation);
 
         //this.dashboardModel = dashboardModel;
@@ -75,14 +78,22 @@ public class MainWindowController {
         registerModelListeners();
 
         // set child controller models
-        financialPlannerController.setModels(financialPlannerData);
-        gradeCalculatorController.setModels(gradeCalculatorData);
-        gradeCalculatorSmallController.setModels(gradeCalculatorData);
-        flashcardController.setModels(flashcardModel);
-        todoController.setModels(todoModel);
+        financialPlannerController.setModel(financialPlannerData);
+        gradeCalculatorController.setModel(gradeCalculatorData);
+        calendarController.setModel(calendarData);
+        todoController.setModel(todoData);
+        colorSettingsController.setModel(colorSettingsManager);
+
+
+        Map<Class, WidgetData> widgetModels = new HashMap<>();
+        widgetModels.put(ToDoDecorator.class, todoData);
+        widgetModels.put(GradeCalculatorData.class, gradeCalculatorData);
+        dashboardController.setWidgetModels(widgetModels);
 
         // display startup page // TODO: 10.10.2023 default mit DASHBOARD starten
         navigation.switchToPage(GRADECALCULATOR);
+        //navigation.switchToPage(FINANCE);
+        showDashboard();
     }
 
     private <T> T loadPage(Navigation.Page page, String viewSource) throws IOException {
@@ -97,14 +108,15 @@ public class MainWindowController {
     }
 
     @FXML
-    private void initialize() {
+    void initialize() {
         try {
             // Setup controllers
-            financialPlannerController = loadPage(FINANCE, "/pm3/hs23/it22a_win/team1/dashboard/financialplanner/FinancialPlanner.fxml");
-            gradeCalculatorController = loadPage(GRADECALCULATOR, "/pm3/hs23/it22a_win/team1/dashboard/gradecalculator/GradeCalculator.fxml");
-            gradeCalculatorSmallController = loadPage(CALENDAR, "/pm3/hs23/it22a_win/team1/dashboard/gradecalculator/GradeCalculatorSmall.fxml");
-            flashcardController = loadPage(FLASHCARD, "/pm3/hs23/it22a_win/team1/dashboard/flashcard/Flashcard.fxml");
-            todoController = loadPage(TODO, "/pm3/hs23/it22a_win/team1/dashboard/todo/Todo.fxml");
+            loadAndSetController(FINANCE, "/pm3/hs23/it22a_win/team1/dashboard/financialplanner/FinancialPlanner.fxml");
+            loadAndSetController(GRADECALCULATOR, "/pm3/hs23/it22a_win/team1/dashboard/gradecalculator/GradeCalculator.fxml");
+            loadAndSetController(CALENDAR, "/pm3/hs23/it22a_win/team1/dashboard/calendar/Calendar.fxml");
+            loadAndSetController(TODO, "/pm3/hs23/it22a_win/team1/dashboard/todo/gui/ToDoFullScreen.fxml");
+            loadAndSetController(DASHBOARD, "/pm3/hs23/it22a_win/team1/dashboard/DashboardView.fxml");
+            loadAndSetController(COLORSETTINGS, "/pm3/hs23/it22a_win/team1/dashboard/ColorSettings.fxml");
 
             // Setup event listeners
 
@@ -115,43 +127,80 @@ public class MainWindowController {
     }
 
     @FXML
-    private void showDashboard() {
+    void showDashboard() {
         navigation.switchToPage(DASHBOARD);
     }
 
     @FXML
-    private void showCalender() {
+    void showCalender() {
         navigation.switchToPage(CALENDAR);
     }
 
     @FXML
-    private void showTodo() {
+    void showTodo() {
         navigation.switchToPage(TODO);
     }
 
     @FXML
-    private void showSettings() {
+    void showSettings() {
         navigation.switchToPage(SETTINGS);
     }
 
     @FXML
-    private void showFlashcard() {
-        navigation.switchToPage(FLASHCARD);
-    }
-
-    @FXML
-    private void showGradeCalculator() {
+    void showGradeCalculator() {
         navigation.switchToPage(GRADECALCULATOR);
     }
 
     @FXML
-    private void showFinancialPlanner() {
+    void showFinancialPlanner() {
         navigation.switchToPage(FINANCE);
     }
 
 
     private void registerModelListeners() {
-        navigation.getCurrentPageProperty().addListener((change, oldPage, newPage) ->
-            pages.get(newPage).toFront());
+        navigation.getCurrentPageProperty().addListener((change, oldPage, newPage) -> {
+            pageContainer.getChildren().clear();
+            Pane newPagePane = pages.computeIfAbsent(newPage, this::loadPageWithFallback);
+            pageContainer.getChildren().add(newPagePane);
+        });
+    }
+
+    private Pane loadPageWithFallback(Navigation.Page page) {
+        try {
+            return loadPage(page, getViewSourceForPage(page));
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, "Error loading page " + page, ex);
+            return new Pane(); // Return an empty pane as a fallback
+        }
+    }
+
+    private String getViewSourceForPage(Navigation.Page page) {
+        return switch (page) {
+            case FINANCE -> "/pm3/hs23/it22a_win/team1/dashboard/financialplanner/FinancialPlanner.fxml";
+            case GRADECALCULATOR -> "/pm3/hs23/it22a_win/team1/dashboard/gradecalculator/GradeCalculator.fxml";
+            case CALENDAR -> "/pm3/hs23/it22a_win/team1/dashboard/calendar/Calendar.fxml";
+            case TODO -> "/pm3/hs23/it22a_win/team1/dashboard/todo/gui/ToDoFullScreen.fxml";
+            case DASHBOARD -> "/pm3/hs23/it22a_win/team1/dashboard/DashboardView.fxml";
+            case COLORSETTINGS -> "/pm3/hs23/it22a_win/team1/dashboard/ColorSettings.fxml";
+            // Add cases for other pages...
+            default -> throw new IllegalArgumentException("Unknown page: " + page);
+        };
+    }
+
+    private void loadAndSetController(Navigation.Page page, String fxmlPath) throws IOException {
+        switch (page) {
+            case DASHBOARD -> dashboardController = loadPage(page, fxmlPath);
+            case CALENDAR -> calendarController = loadPage(page, fxmlPath);
+            case FINANCE -> financialPlannerController = loadPage(page, fxmlPath);
+            case GRADECALCULATOR -> gradeCalculatorController = loadPage(page, fxmlPath);
+            case TODO -> todoController = loadPage(page, fxmlPath);
+            case COLORSETTINGS -> colorSettingsController = loadPage(page, fxmlPath);
+            default -> throw new IllegalArgumentException("Unknown page: " + page);
+        }
+    }
+
+    @FXML
+    void showThemeSettings() {
+        navigation.switchToPage(COLORSETTINGS);
     }
 }

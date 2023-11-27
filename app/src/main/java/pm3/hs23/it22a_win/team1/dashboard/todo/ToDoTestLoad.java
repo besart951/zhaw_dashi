@@ -12,7 +12,7 @@ import pm3.hs23.it22a_win.team1.dashboard.todo.model.TaskList;
  * TODO remove or use in tests
  * 
  * @author elmiglor
- * @version 2023-10-27
+ * @version 2023-11-12
  */
 public class ToDoTestLoad {
     private TaskList activeTaskList;
@@ -44,5 +44,8 @@ public class ToDoTestLoad {
         return "test1";
     }
 
+    public static String getColorScheme() {
+        return "-my-base-color: aliceblue; -my-accent-color: lightblue; -my-focus-color: cornflowerblue;";
+    }
     
 }

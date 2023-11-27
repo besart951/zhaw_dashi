@@ -1,9 +1,11 @@
 package pm3.hs23.it22a_win.team1.dashboard.calendar;
 
-public class CalendarController {
-    private CalendarModel calendarModel;
+import pm3.hs23.it22a_win.team1.dashboard.gradecalculator.GradeCalculatorData;
 
-    public void setModels(CalendarModel calendarModel) {
-        this.calendarModel = calendarModel;
+public class CalendarController {
+    private CalendarData calendarData;
+
+    public void setModel(CalendarData calendarData) {
+        this.calendarData = calendarData;
     }
 }

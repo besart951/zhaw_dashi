@@ -1,23 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<DialogPane prefHeight="235.0" prefWidth="323.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
-            fx:controller="pm3.hs23.it22a_win.team1.dashboard.financialplanner.ItemChooserDialogController"
-            xmlns:fx="http://javafx.com/fxml" fx:id="dialogPane" >
-    <ButtonType buttonData="OK_DONE" text="Erstellen" />
-    <ButtonType buttonData="CANCEL_CLOSE" text="Abbrechen" />
+<DialogPane fx:id="dialogPane" prefHeight="235.0" prefWidth="323.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pm3.hs23.it22a_win.team1.dashboard.financialplanner.ItemChooserDialogController">
+    <headerText>Erstellen Sie einen neuen Eintrag</headerText>
     <content>
         <GridPane hgap="10" vgap="10">
-            <ComboBox fx:id="typeComboBox" prefWidth="161.0" promptText="Ausg.-Einnahmen" GridPane.rowIndex="0" />
+            <ComboBox fx:id="typeComboBox" prefWidth="161.0" promptText="Ausg.-Einnahmen" scaleShape="false" GridPane.rowIndex="0" />
             <TextField fx:id="amountNameField" promptText="Name" GridPane.rowIndex="1" />
             <TextField fx:id="amountQuantityField" promptText="Menge" GridPane.rowIndex="2" />
-            <DatePicker fx:id="startDatePicker" promptText="Von" GridPane.rowIndex="3" />
+            <DatePicker fx:id="startDatePicker" editable="false" promptText="Von" GridPane.rowIndex="3" />
             <DatePicker fx:id="endDatePicker" promptText="Bis" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <CheckBox onAction="#hasEndDateCheckBoxStatus" fx:id="hasEndDateCheckBox" text="Kein Enddatum" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <CheckBox fx:id="hasEndDateCheckBox" onAction="#hasEndDateCheckBoxStatus" text="Kein Enddatum" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <ComboBox fx:id="intervalComboBox" prefWidth="150.0" promptText="Intervall" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+            <Label fx:id="validationMessageLabel" style="-fx-text-fill: -color-danger-4" wrapText="true" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="4" GridPane.vgrow="ALWAYS" />
+
+            <Button fx:id="okButton" onAction="#createFinancialItem" prefHeight="25.0" prefWidth="130.0" styleClass="accent" text="Erstellen" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.vgrow="ALWAYS">
+                <graphic>
+                    <FontIcon iconLiteral="mdi2w-wallet-plus-outline"/>
+                </graphic>
+            </Button>
+            <Button onAction="#closeWindow" prefHeight="25.0" prefWidth="130.0" text="Schliessen" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.vgrow="ALWAYS" >
+                <graphic>
+                    <FontIcon iconLiteral="mdi2c-close" />
+                </graphic>
+            </Button>
 
             <columnConstraints>
                 <ColumnConstraints percentWidth="50" />
@@ -28,6 +47,8 @@
                 <RowConstraints />
                 <RowConstraints />
                 <RowConstraints />
+                <RowConstraints minHeight="60" vgrow="ALWAYS" />
+                <RowConstraints />
             </rowConstraints>
         </GridPane>
     </content>
@@ -35,4 +56,3 @@
         <Insets bottom="10" left="10" right="10" top="10" />
     </padding>
 </DialogPane>
-

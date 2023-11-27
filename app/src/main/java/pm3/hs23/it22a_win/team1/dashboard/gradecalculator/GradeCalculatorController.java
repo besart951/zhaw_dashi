@@ -1,57 +1,42 @@
 package pm3.hs23.it22a_win.team1.dashboard.gradecalculator;
 
 import javafx.animation.PauseTransition;
-import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
-
-import javafx.scene.layout.Border;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
-import javafx.scene.layout.VBox;
-
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import javafx.util.Duration;
-import javafx.util.converter.DoubleStringConverter;
-import javafx.util.converter.IntegerStringConverter;
+import javafx.util.StringConverter;
+import org.controlsfx.control.CheckComboBox;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 /**
  * The {@code GradeCalculatorController} class is responsible for managing the
- * user interface
- * for the grade calculator feature within the dashboard application. It handles
- * the creation,
- * modification, and deletion of semesters and modules, as well as updating the
- * UI components
- * accordingly.
+ * user interface of the grade calculator feature.
  *
  * @author Besart Morina
  * @version 09.11.2023
  */
 public class GradeCalculatorController {
 
-    @FXML private VBox vBoxContent;
-    @FXML private ComboBox<String> comboSemester;
-    @FXML private ComboBox<String> comboModulgruppe;
-
-    @FXML private TableView<Module> tableOverview;
-    @FXML private TableColumn<Module, String> nameColumn;
-    @FXML private TableColumn<Module, String> shortNameColumn;
-    @FXML private TableColumn<Module, Integer> creditsColumn;
-    @FXML private TableColumn<Module, Integer> moduleGroupColumn;
-    @FXML private TableColumn<Module, Double> preGradeColumn;
-    @FXML private TableColumn<Module, Double> weightPreliminaryGradeColumn;
-    @FXML private TableColumn<Module, Double> examGradeColumn;
-    @FXML private TableColumn<Module, Double> calculatedGradeColumn;
-    @FXML private Label averageGradeLabel;
+    @FXML
+    private StackPane viewWidgetContent;
+    @FXML
+    private ComboBox<Semester> comboSemester;
+    @FXML
+    private CheckComboBox<String> comboModulgruppe;
+    @FXML
+    private Label averageGradeLabel;
+    @FXML
+    private VBox vBoxContent;
+    private TableView<Module> tableOverview;
 
     private Border defaultBorder;
     private GradeCalculatorData gradeCalculatorData;
@@ -61,20 +46,30 @@ public class GradeCalculatorController {
     /**
      * Initializes the grade calculator controller with the given data.
      *
-     * @param gradeCalculatorData
+     * @param gradeCalculatorData the {@code GradeCalculatorData} object containing the data model
      */
     public void initialize(GradeCalculatorData gradeCalculatorData) {
         this.gradeCalculatorData = gradeCalculatorData;
-        setupComponents();
+
+        GradeCalcTableView gradeCalcTableView = new GradeCalcTableView(viewWidgetContent);
+        gradeCalcTableView.showBigView();
+        gradeCalcTableView.setOnEditCommitCallback(() -> {
+            updateAverageGradeLabel();
+            updateComboModuleGroup();
+        });
+        this.tableOverview = gradeCalcTableView.getTableOverview();
+        vBoxContent.getChildren().add(tableOverview);
+        VBox.setVgrow(tableOverview, Priority.ALWAYS);
         setupListeners();
+        setupComponents();
     }
 
     /**
      * Sets the models for the grade calculator controller.
      *
-     * @param gradeCalculatorData
+     * @param gradeCalculatorData the {@code GradeCalculatorData} object containing the data model
      */
-    public void setModels(GradeCalculatorData gradeCalculatorData) {
+    public void setModel(GradeCalculatorData gradeCalculatorData) {
         initialize(gradeCalculatorData);
     }
 
@@ -82,16 +77,32 @@ public class GradeCalculatorController {
      * Sets the models for the grade calculator controller.
      */
     private void setupComponents() {
-        setupTable();
-        List<String> nameOfSemesters = new ArrayList<>();
+        comboSemester.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Semester semester) {
+                return semester == null ? null : semester.getDescription();
+            }
+
+            @Override
+            public Semester fromString(String string) {
+                return comboSemester.getItems().stream()
+                    .filter(item -> item.getDescription().equals(string))
+                    .findFirst()
+                    .orElse(null);
+            }
+        });
+
+        List<Semester> nameOfSemesters = new ArrayList<>();
         ObservableList<Module> allModules = FXCollections.observableArrayList();
 
         gradeCalculatorData.getListOfSemesters().forEach(semester -> {
-            nameOfSemesters.add(semester.getDescription());
+            nameOfSemesters.add(semester);
             allModules.addAll(semester.getModules());
         });
 
         comboSemester.getItems().addAll(nameOfSemesters);
+
+
         tableOverview.setItems(allModules);
         defaultBorder = comboSemester.getBorder();
         tableOverview.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -99,134 +110,30 @@ public class GradeCalculatorController {
     }
 
     /**
-     * Sets up the table view for the grade calculator.
-     */
-    private void setupTable() {
-        setupCellFactories();
-        setupCellValueFactories();
-    }
-
-    /**
-     * Sets up the cell factories for the table view.
-     */
-    private void setupCellFactories() {
-        setupStringColumn(nameColumn, 30);
-        setupStringColumn(shortNameColumn, 5);
-        setupIntegerColumn(creditsColumn, 0, 12);
-        setupIntegerColumn(moduleGroupColumn, 0, 12);
-        setupDoubleColumn(preGradeColumn, 0.00, 6.00);
-        setupDoubleColumn(weightPreliminaryGradeColumn, 1, 100);
-        setupDoubleColumn(examGradeColumn, 0.00, 6.00);
-    }
-
-    /**
-     * Sets up the cell value factories for the table view.
-     *
-     * @param column    The column to set up the cell value factory for.
-     * @param maxLength The maximum length of the string.
-     */
-    private void setupStringColumn(TableColumn<Module, String> column, int maxLength) {
-        column.setCellFactory(TextFieldTableCell.forTableColumn());
-        column.setOnEditCommit(event -> {
-            String value = event.getNewValue() != null ? event.getNewValue() : event.getOldValue();
-            value = value != null && value.length() > maxLength ? value.substring(0, maxLength) : value;
-            Module module = event.getTableView().getItems().get(event.getTablePosition().getRow());
-            if (column == nameColumn) {
-                module.setName(value);
-            } else if (column == shortNameColumn) {
-                module.setShortName(value);
-            }
-            tableOverview.refresh();
-        });
-    }
-
-    /**
-     * Sets up the cell value factories for the table view.
-     *
-     * @param column The column to set up the cell value factory for.
-     * @param min    The minimum value of the integer Input.
-     * @param max    The maximum value of the integer Input.
-     */
-    private void setupIntegerColumn(TableColumn<Module, Integer> column, int min, int max) {
-        column.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
-        column.setOnEditCommit(event -> {
-            Integer value = event.getNewValue() != null ? event.getNewValue() : event.getOldValue();
-            value = value != null && value >= min && value <= max ? value : null;
-            Module module = event.getTableView().getItems().get(event.getTablePosition().getRow());
-            if (column == creditsColumn) {
-                module.setCredits(value);
-            } else if (column == moduleGroupColumn) {
-                module.setModuleGroup(value);
-            }
-            tableOverview.refresh();
-            updateAverageGradeLabel();
-            updateComboModuleGroup();
-        });
-    }
-
-    /**
-     * Sets up the cell value factories for the table view.
-     *
-     * @param column The column to set up the cell value factory for.
-     * @param min    The minimum value of the double Input.
-     * @param max    The maximum value of the double Input.
-     */
-    private void setupDoubleColumn(TableColumn<Module, Double> column, double min, double max) {
-        column.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
-        column.setOnEditCommit(event -> {
-            Double value = event.getNewValue() != null ? event.getNewValue() : event.getOldValue();
-            value = value != null && value >= min && value <= max ? value : null;
-            Module module = event.getTableView().getItems().get(event.getTablePosition().getRow());
-            if (column == preGradeColumn) {
-                module.setPreGrade(value);
-            } else if (column == weightPreliminaryGradeColumn) {
-                module.setWeightPreliminaryGrade(value);
-            } else if (column == examGradeColumn) {
-                module.setExamGrade(value);
-            }
-            module.setCalculatedGrade(module.calculateModuleGrade());
-            tableOverview.refresh();
-            updateAverageGradeLabel();
-        });
-    }
-
-    /**
-     * Sets up the cell value factories for the table view.
-     */
-    private void setupCellValueFactories() {
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        shortNameColumn.setCellValueFactory(new PropertyValueFactory<>("shortName"));
-        creditsColumn.setCellValueFactory(new PropertyValueFactory<>("credits"));
-        moduleGroupColumn.setCellValueFactory(new PropertyValueFactory<>("moduleGroup"));
-        preGradeColumn.setCellValueFactory(new PropertyValueFactory<>("preGrade"));
-        weightPreliminaryGradeColumn.setCellValueFactory(new PropertyValueFactory<>("weightPreliminaryGrade"));
-        examGradeColumn.setCellValueFactory(new PropertyValueFactory<>("examGrade"));
-        calculatedGradeColumn
-                .setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getCalculatedGrade()));
-    }
-
-    /**
      * Applies the filter to the table view.
      *
-     * @throws Exception If the module group is not a number.
+     * @throws ExecutionException If the module group is not a number.
      */
     @FXML
-    public void filterApplyButton() throws Exception {
-        String selectedSemesterDescription = comboSemester.getValue();
-        Integer selectedModuleGroup = null;
-        try {
-            if (comboModulgruppe.getValue() != null) {
-                selectedModuleGroup = Integer.parseInt(comboModulgruppe.getValue());
+    public void filterApplyButton() throws ExecutionException {
+        Semester selectedSemester = comboSemester.getValue();
+        List<Integer> selectedModuleGroups = new ArrayList<>();
+
+        // Retrieve the selected module group values
+        for (String selected : comboModulgruppe.getCheckModel().getCheckedItems()) {
+            try {
+                selectedModuleGroups.add(Integer.parseInt(selected));
+            } catch (NumberFormatException e) {
+                throw new ExecutionException("Invalid module group number: " + selected, e);
             }
-        } catch (NumberFormatException e) {
-            throw new Exception(e);
         }
 
         ObservableList<Module> filteredModules = FXCollections.observableArrayList();
         for (Semester semester : gradeCalculatorData.getListOfSemesters()) {
-            if (selectedSemesterDescription == null || semester.getDescription().equals(selectedSemesterDescription)) {
+            if (selectedSemester == null || semester == selectedSemester) {
                 for (Module module : semester.getModules()) {
-                    if (module.getModuleGroup() == selectedModuleGroup) {
+                    // Check if the module group is in the selected groups or if no group is selected
+                    if (selectedModuleGroups.isEmpty() || selectedModuleGroups.contains(module.getModuleGroup())) {
                         filteredModules.add(module);
                     }
                 }
@@ -234,6 +141,7 @@ public class GradeCalculatorController {
         }
 
         tableOverview.setItems(filteredModules);
+        updateAverageGradeLabel();
     }
 
     /**
@@ -242,13 +150,14 @@ public class GradeCalculatorController {
     @FXML
     public void filterResetButton() {
         comboSemester.setValue(null);
-        comboModulgruppe.setValue(null);
+        comboModulgruppe.getCheckModel().clearChecks();
 
         ObservableList<Module> allModules = FXCollections.observableArrayList();
         for (Semester semester : gradeCalculatorData.getListOfSemesters()) {
             allModules.addAll(semester.getModules());
         }
         tableOverview.setItems(allModules);
+        updateAverageGradeLabel();
     }
 
     /**
@@ -257,12 +166,13 @@ public class GradeCalculatorController {
     @FXML
     public void addModuleButton() {
         if (isSemesterSelected()) {
-            if (gradeCalculatorData.getModulesInSemester(comboSemester.getValue()).size() < MAX_MODULES) {
+            if (gradeCalculatorData.getListOfModules(comboSemester.getValue()).size() < MAX_MODULES) {
                 gradeCalculatorData.createNewModuleInSemester(comboSemester.getValue());
             }
         } else {
             showSemesterSelectionError();
         }
+        updateAverageGradeLabel();
     }
 
     /**
@@ -272,7 +182,7 @@ public class GradeCalculatorController {
     public void deleteModuleButton() {
         List<Module> selectedModules = new ArrayList<>(tableOverview.getSelectionModel().getSelectedItems());
         selectedModules.forEach(gradeCalculatorData::removeModule);
-        tableOverview.getItems().removeAll(selectedModules);
+        updateAverageGradeLabel();
     }
 
     /**
@@ -318,7 +228,7 @@ public class GradeCalculatorController {
         semesters.addListener(this::onSemesterListChanged);
         semesters.forEach(this::addModuleListener);
         tableOverview.getItems()
-                .addListener((ListChangeListener.Change<? extends Module> change) -> updateAverageGradeLabel());
+            .addListener((ListChangeListener.Change<? extends Module> change) -> updateAverageGradeLabel());
     }
 
     /**
@@ -353,8 +263,9 @@ public class GradeCalculatorController {
      */
     private void addSemester(Semester semester) {
         addModuleListener(semester);
-        comboSemester.getItems().add(semester.getDescription());
+        comboSemester.getItems().add(semester);
         semester.getModules().forEach(this::addModuleInTableOverview);
+        tableOverview.refresh();
     }
 
     /**
@@ -363,8 +274,10 @@ public class GradeCalculatorController {
      * @param semester The semester to remove.
      */
     private void removeSemester(Semester semester) {
-        comboSemester.getItems().remove(semester.getDescription());
-        tableOverview.getItems().removeAll(semester.getModules());
+        Objects.requireNonNull(semester);
+        comboSemester.setValue(null);
+        comboSemester.getItems().remove(semester);
+        tableOverview.refresh();
     }
 
     /**
@@ -374,6 +287,7 @@ public class GradeCalculatorController {
      */
     private void addModuleInTableOverview(Module moduleToAdd) {
         tableOverview.getItems().add(moduleToAdd);
+        tableOverview.refresh();
     }
 
     /**
@@ -385,14 +299,10 @@ public class GradeCalculatorController {
         semester.getModules().addListener((ListChangeListener.Change<? extends Module> change) -> {
             while (change.next()) {
                 if (change.wasAdded()) {
-                    for (Module addedModule : change.getAddedSubList()) {
-                        addModuleInTableOverview(addedModule);
-                    }
+                    change.getAddedSubList().forEach(this::addModuleInTableOverview);
                 }
                 if (change.wasRemoved()) {
-                    for (Module removedModule : change.getRemoved()) {
-                        removeModuleInTableOverview(removedModule);
-                    }
+                    change.getRemoved().forEach(this::removeModuleInTableOverview);
                 }
             }
         });
@@ -405,6 +315,7 @@ public class GradeCalculatorController {
      */
     private void removeModuleInTableOverview(Module moduleToRemove) {
         tableOverview.getItems().remove(moduleToRemove);
+        tableOverview.refresh();
     }
 
     /**
@@ -413,19 +324,17 @@ public class GradeCalculatorController {
      * @return True if a semester is selected, false otherwise.
      */
     private boolean isSemesterSelected() {
-        return comboSemester.getValue() != null && !comboSemester.getValue().trim().isEmpty();
+        return comboSemester.getValue() != null;
     }
 
     /**
      * Shows an error if no semester is selected.
-     *
-     * @throws Exception If no semester is selected.
      */
     private void showSemesterSelectionError() {
         comboSemester.setBorder(new Border(new BorderStroke(Color.RED,
-                BorderStrokeStyle.SOLID,
-                CornerRadii.EMPTY,
-                BorderWidths.DEFAULT)));
+            BorderStrokeStyle.SOLID,
+            CornerRadii.EMPTY,
+            BorderWidths.DEFAULT)));
         PauseTransition pause = new PauseTransition(Duration.seconds(2));
         pause.setOnFinished(event -> comboSemester.setBorder(defaultBorder));
         pause.play();
@@ -446,32 +355,37 @@ public class GradeCalculatorController {
      */
     public double calculateAverageGrade() {
         ObservableList<Module> modules = tableOverview.getItems();
-        if (modules.isEmpty()) {
-            return 0.00;
-        }
-
-        double totalCredits = 0;
-        double weightedSum = 0;
-
-        for (Module module : modules) {
-            double grade = module.getCalculatedGrade();
-            int credits = module.getCredits(); // Assuming getCredits() returns an Integer
-            if (credits > 0 && grade > 0) {
-                weightedSum += grade * credits;
-                totalCredits += credits;
-            }
-        }
-
-        return totalCredits > 0 ? weightedSum / totalCredits : 0.0;
+        return gradeCalculatorData.calculateAverage(modules);
     }
 
     /**
      * Removes the selected semester from the combo box.
      */
-    public void removeSemester() {
-        Object selectedItem = comboSemester.getSelectionModel().getSelectedItem();
-        if (selectedItem != null) {
-            comboSemester.getItems().remove(selectedItem);
+    @FXML
+    private void removeSemesterButton() {
+        if (isSemesterSelected()) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Bestätigung erforderlich");
+
+            Image icon = new Image(getClass().getResourceAsStream("/pm3/hs23/it22a_win/team1/dashboard/icons/estimates.png"));
+            Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+            alertStage.getIcons().add(icon);
+
+            alert.setHeaderText("Löschen des Semesters");
+            alert.setContentText("Sind Sie sicher, dass Sie das Semester \nmit allen Modulen unwiderruflich löschen möchten?");
+
+            ButtonType buttonTypeYes = new ButtonType("Ja, löschen");
+            ButtonType buttonTypeNo = new ButtonType("Nein, abbrechen", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+            alert.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo);
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get() == buttonTypeYes) {
+                gradeCalculatorData.removeSemester(comboSemester.getValue());
+            }
+        } else {
+            showSemesterSelectionError();
         }
     }
+
 }

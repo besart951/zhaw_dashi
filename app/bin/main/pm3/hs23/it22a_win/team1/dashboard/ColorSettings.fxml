@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane  prefHeight="168.0" prefWidth="334.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pm3.hs23.it22a_win.team1.dashboard.ColorSettingsController">
+
+    <VBox layoutX="50" layoutY="50" spacing="20" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+
+        <Button onAction="#applyCupertinoDark" text="Cupertino dunkel" />
+        <Button onAction="#applyCupertinoLight" text="Cupertino hell" />
+        <Button onAction="#applyDracula" text="Dracula" />
+        <Button onAction="#applyNordDark" text="Nord dunkel" />
+        <Button onAction="#applyNordLight" text="Nord hell" />
+        <Button onAction="#applyPrimerDark" text="Primär dark" />
+        <Button onAction="#applyPrimerLight" text="Primär hell" />
+
+        <ColorPicker fx:id="colorPicker" visible="false" />
+    </VBox>
+
+
+</AnchorPane>

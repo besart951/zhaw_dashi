@@ -7,12 +7,12 @@ import java.util.TreeMap;
 /**
  * This class handles {@link TaskList} on a top level. It is meant as an entry
  * point for a new to-do list data object.
- * 
+ *
  * @author elmiglor
- * @version 2023-10-27
+ * @version 2023-11-12
  */
 public class ToDoData {
-    protected String DAILY_LIST;
+    protected String DAILY_LIST; // TODO const?
     protected Map<String, TaskList> taskLists;
     // private List<TaskList> taskLists; //TODO list or map?
 
@@ -29,7 +29,7 @@ public class ToDoData {
 
     /**
      * Returns the unique names of all managed {@link TaskList}.
-     * 
+     *
      * @return
      */
     public List<String> getNamesAllLists() {
@@ -39,9 +39,13 @@ public class ToDoData {
         return allTaskLists;
     }
 
+    protected Map<String, TaskList> getCopyOfTaskListsMap() {
+        return Map.copyOf(taskLists);
+    }
+
     /**
      * Returns the {@link TaskList} corresponding to the given list name.
-     * 
+     *
      * @param nameList the name of the {@link TaskList}
      * @return the corresponding {@link TaskList}
      */
@@ -54,7 +58,7 @@ public class ToDoData {
      * {@link ToDoData}. The name of the new list must be unique (not contained in
      * the managed list), max length of 30 characters and not blank nor null.
      * Leading and trailing spaces get removed.
-     * 
+     *
      * @param nameList the name of the new {@link TaskList}
      * @return true if list was successfuly created
      */
@@ -75,7 +79,7 @@ public class ToDoData {
     /**
      * Removes the corresponding {@link TaskList} for the given name.
      * The {@link DailyTaskList} can not be removed.
-     * 
+     *
      * @param nameList the name of the list which should be removed
      */
     protected void removeList(String nameList) { // TODO what happens to tasks, esp if on daily list?
@@ -87,12 +91,28 @@ public class ToDoData {
     /**
      * Checks wheter the {@link TaskList} for the given name is managed by the
      * calling instance of {@link ToDoData}.
-     * 
+     *
      * @param nameList the name of the {@link TaskList} which should be checked
      * @return true if name is in list
      */
     public boolean containsList(String nameList) {
         return taskLists.containsKey(nameList);
+    }
+
+    /**
+     * Adds a {@link Task} to the given {@link TaskList} and if successful removes
+     * it from the {@link TaskList} initially containing the task.
+     *
+     * @param task     the task which should be relocated
+     * @param fromList the task list where the task is currently located
+     * @param toList   the task list where the task should be moved to
+     * @return true if successfully relocated
+     */
+    protected boolean relocateTaskToOtherList(Task task, TaskList fromList, TaskList toList) {
+        if (toList.addTask(task)) {
+            return fromList.removeTask(task);
+        }
+        return false;
     }
 
 }

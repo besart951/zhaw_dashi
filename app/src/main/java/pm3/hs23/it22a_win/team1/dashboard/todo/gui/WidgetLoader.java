@@ -25,6 +25,7 @@ public class WidgetLoader extends Application {
         ToDoTestLoad testLoad = new ToDoTestLoad();
         ((ToDoBigController) loader.getController())
                 .setModel(new ToDoDecorator(testLoad.getTaskLists(), testLoad.getNameActiveTaskList()));
+
         Scene scene = new Scene(loadScreen);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Test - ToDo");

@@ -4,8 +4,13 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import pm3.hs23.it22a_win.team1.dashboard.todo.gui.IsObservable;
+import pm3.hs23.it22a_win.team1.dashboard.todo.gui.IsObserver;
+import pm3.hs23.it22a_win.team1.dashboard.todo.gui.UpdateEvent;
 
-import java.util.Objects;
+import java.util.*;
 
 
 /**
@@ -17,7 +22,7 @@ import java.util.Objects;
  * @author Besart Morina
  * @version 02.11.2023
  */
-public class Module {
+public class Module implements IsObservable, ChangeListener<Object> {
     private final SimpleStringProperty name;
     private final SimpleStringProperty shortName;
     private final SimpleIntegerProperty credits;
@@ -26,6 +31,8 @@ public class Module {
     private final SimpleDoubleProperty weightPreliminaryGrade;
     private final SimpleIntegerProperty moduleGroup;
     private final DoubleProperty calculatedGrade;
+
+    private final List<IsObserver> observers = new ArrayList<>();
 
     /**
      * Constructs a new Module with the specified details.
@@ -53,6 +60,15 @@ public class Module {
         this.weightPreliminaryGrade = new SimpleDoubleProperty(weightPreliminaryGrade);
         this.moduleGroup = new SimpleIntegerProperty(0);
         this.calculatedGrade = new SimpleDoubleProperty(this.calculateModuleGrade());
+
+        this.name.addListener(this);
+        this.shortName.addListener(this);
+        this.credits.addListener(this);
+        this.preGrade.addListener(this);
+        this.examGrade.addListener(this);
+        this.weightPreliminaryGrade.addListener(this);
+        this.moduleGroup.addListener(this);
+        this.calculatedGrade.addListener(this);
     }
 
     /**
@@ -107,9 +123,11 @@ public class Module {
     public double getWeightPreliminaryGrade() {
         return weightPreliminaryGrade.get();
     }
+
     public int getModuleGroup() {
         return moduleGroup.get();
     }
+
     public double getCalculatedGrade() {
         return calculatedGrade.get();
     }
@@ -137,6 +155,7 @@ public class Module {
     }
 
     public void setExamGrade(double examGrade) {
+        validateNonNegative(examGrade, "Exam grade");
         this.examGrade.set(examGrade);
     }
 
@@ -144,7 +163,8 @@ public class Module {
         validateNonNegative(weightPreliminaryGrade, "Weight Preliminary Grade");
         this.weightPreliminaryGrade.set(weightPreliminaryGrade);
     }
-    public void setModuleGroup(int moduleGroup){
+
+    public void setModuleGroup(int moduleGroup) {
         validateNonNegative(moduleGroup, "Module Group");
         this.moduleGroup.set(moduleGroup);
     }
@@ -171,5 +191,27 @@ public class Module {
         }
     }
 
+    @Override
+    public void addListener(IsObserver observer) {
+        this.observers.add(observer);
+    }
+
+    @Override
+    public void removeListener(IsObserver observer) {
+        this.observers.remove(observer);
+    }
+
+    @Override
+    public void informListener(UpdateEvent updateEvent) {
+        for (IsObserver observer : observers) {
+            observer.update(updateEvent);
+        }
+    }
+
+    @Override
+    public void changed(ObservableValue<?> observable, Object oldValue, Object newValue) {
+        System.out.println("Module object changed " + observable + " " + oldValue + " " + newValue);
+        informListener(UpdateEvent.UPDATE_LIST);
+    }
 }
 

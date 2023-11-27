@@ -1,12 +1,21 @@
 package pm3.hs23.it22a_win.team1.dashboard.gradecalculator;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.text.Text;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TableView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import pm3.hs23.it22a_win.team1.dashboard.WidgetController;
+import pm3.hs23.it22a_win.team1.dashboard.WidgetData;
+import pm3.hs23.it22a_win.team1.dashboard.WidgetModels;
 
-import java.util.stream.Collectors;
+import java.io.IOException;
 
 /**
  * The {@code GradeCalculatorSmallController} class is responsible for managing the compact user interface
@@ -16,19 +25,35 @@ import java.util.stream.Collectors;
  * @author Besart Morina
  * @version 02.11.2023
  */
-public class GradeCalculatorSmallController {
+public class GradeCalculatorSmallController implements WidgetController {
 
     @FXML
-    private ListView<String> overviewList;
-
+    private StackPane smallWidgetContent;
+    @FXML
+    private VBox vBoxContent;
+    private TableView<Module> tableOverview;
     private GradeCalculatorData gradeCalculatorData;
 
     /**
      * Initializes the controller class. This method is automatically called after the FXML file has been loaded.
      * It sets up the formatting for the list view that displays the overview of semesters and modules.
+     *
+     * @param gradeCalculatorData the {@code GradeCalculatorData} object containing the data model
      */
-    public void initialize() {
-        listTextFormatter();
+    public void initialize(GradeCalculatorData gradeCalculatorData) {
+        this.gradeCalculatorData = gradeCalculatorData;
+
+        GradeCalcTableView gradeCalcTableView = new GradeCalcTableView(smallWidgetContent);
+        gradeCalcTableView.showSmallView();
+        this.tableOverview = gradeCalcTableView.getTableOverview();
+        vBoxContent.getChildren().add(tableOverview);
+
+        ObservableList<Module> allModules = FXCollections.observableArrayList();
+
+        tableOverview.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        this.gradeCalculatorData.getListOfSemesters().forEach(semester -> allModules.addAll(semester.getModules()));
+        tableOverview.setItems(allModules);
+        setupListeners();
     }
 
     /**
@@ -37,27 +62,50 @@ public class GradeCalculatorSmallController {
      *
      * @param gradeCalculatorData the {@code GradeCalculatorData} object containing the data model
      */
-    public void setModels(GradeCalculatorData gradeCalculatorData) {
-        this.gradeCalculatorData = gradeCalculatorData;
-        setupListeners();
-        populateOverview();
+    @Override
+    public void setModel(WidgetData gradeCalculatorData) {
+        initialize((GradeCalculatorData) gradeCalculatorData);
+    }
+
+    private void setupListeners() {
+        ObservableList<Semester> semesters = gradeCalculatorData.getListOfSemesters();
+        semesters.addListener(this::onSemesterListChanged);
+        semesters.forEach(this::addModuleListener);
     }
 
     /**
-     * Sets up listeners to observe changes in the list of semesters and their modules. It ensures that the
-     * overview list is updated whenever the underlying data model changes.
+     * Updates the combo box for the module group.
+     *
+     * @param change The change to the semester list.
      */
-    private void setupListeners() {
-        gradeCalculatorData.getListOfSemesters().addListener((ListChangeListener.Change<? extends Semester> change) -> {
-            while (change.next()) {
-                if (change.wasAdded()) {
-                    change.getAddedSubList().forEach(this::addModuleListener);
-                }
-                populateOverview();
+    private void onSemesterListChanged(ListChangeListener.Change<? extends Semester> change) {
+        while (change.next()) {
+            if (change.wasAdded()) {
+                change.getAddedSubList().forEach(this::addSemester);
             }
-        });
+            if (change.wasRemoved()) {
+                change.getRemoved().forEach(this::removeSemester);
+            }
+        }
+    }
 
-        gradeCalculatorData.getListOfSemesters().forEach(this::addModuleListener);
+    /**
+     * Adds a semester to the grade calculator.
+     *
+     * @param semester The semester to add.
+     */
+    private void addSemester(Semester semester) {
+        addModuleListener(semester);
+        semester.getModules().forEach(this::addModuleInTableOverview);
+    }
+
+    /**
+     * Removes a semester from the grade calculator.
+     *
+     * @param semester The semester to remove.
+     */
+    private void removeSemester(Semester semester) {
+        tableOverview.getItems().removeAll(semester.getModules());
     }
 
     /**
@@ -70,48 +118,42 @@ public class GradeCalculatorSmallController {
         semester.getModules().addListener((ListChangeListener.Change<? extends Module> change) -> {
             while (change.next()) {
                 if (change.wasAdded() || change.wasRemoved()) {
-                    populateOverview();
+                    for (Module addedModule : change.getAddedSubList()) {
+                        addModuleInTableOverview(addedModule);
+                    }
                 }
             }
         });
     }
 
-    /**
-     * Populates the overview list with a summary of each semester and its modules. The summary includes the
-     * semester description and a list of module short names with their calculated grades.
-     */
-    private void populateOverview() {
-        overviewList.getItems().setAll(
-            gradeCalculatorData.getListOfSemesters().stream().map(semester -> {
-                String semesterInfo = semester.getDescription() + ": ";
-                String modulesInfo = semester.getModules().stream()
-                    .map(module -> module.getShortName() + " - " + String.format("%.2f", module.calculateModuleGrade()))
-                    .collect(Collectors.joining(", "));
-                return semesterInfo + modulesInfo;
-            }).collect(Collectors.toList())
-        );
+    private void addModuleInTableOverview(Module moduleToAdd) {
+        tableOverview.getItems().add(moduleToAdd);
+    }
+
+    @Override
+    public WidgetModels getModelType() {
+        //TODO implement method
+        return null;
     }
 
     /**
-     * Configures the list view's cell factory to format the text of each list item. This ensures that the text
-     * in the list view is wrapped and displayed correctly.
+     * Loads the FXML file for the grade calculator feature.
+     *
+     * @param widgetData the {@code WidgetData} object containing the data model
+     * @return the {@code Pane} object containing the grade calculator feature
      */
-    private void listTextFormatter(){
-        overviewList.setCellFactory(listView -> new ListCell<>() {
-            private final Text text = new Text();
+    @Override
+    public Pane loadModelNode(WidgetData widgetData) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/pm3/hs23/it22a_win/team1/dashboard/gradecalculator/GradeCalculatorSmall.fxml"));
+            Pane root = fxmlLoader.load();
 
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-
-                if (empty || item == null) {
-                    setGraphic(null);
-                } else {
-                    text.setText(item);
-                    text.wrappingWidthProperty().bind(listView.widthProperty().subtract(15)); // Subtract some padding
-                    setGraphic(text);
-                }
-            }
-        });
+            GradeCalculatorSmallController controller = fxmlLoader.getController();
+            controller.setModel(widgetData);
+            return root;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

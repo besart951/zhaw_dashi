@@ -20,29 +20,23 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.Tooltip;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import javafx.util.StringConverter;
+import pm3.hs23.it22a_win.team1.dashboard.todo.ToDoTestLoad;
 import pm3.hs23.it22a_win.team1.dashboard.todo.model.Task;
 
 /**
@@ -50,12 +44,15 @@ import pm3.hs23.it22a_win.team1.dashboard.todo.model.Task;
  * create, modify or show a task.
  * 
  * @author elmiglor
- * @version 2023-10-27
+ * @version 2023-11-12
  */
-public class TaskController {
+public class TaskController implements IsObserver{
 
     @FXML
     private StackPane btnCancel;
+
+    @FXML
+    private HBox btnContainer;
 
     @FXML
     private StackPane btnCreate;
@@ -88,6 +85,9 @@ public class TaskController {
     private DatePicker pickerExecutionDate;
 
     @FXML
+    private AnchorPane rootPane;
+
+    @FXML
     private TextArea txtDescription;
 
     @FXML
@@ -96,57 +96,17 @@ public class TaskController {
     @FXML
     private TextField txtTitle;
 
-    private Image imgCreate;
-    private Image imgEdit;
-    private Image imgDelete;
-    private Image imgCancel;
-
     private ToDoDecorator listContainer;
     private Task task = null;
+    private boolean fullscreen = false;
     private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     @FXML
     void initialize() {
-        Platform.runLater(() -> {
-            txtTitle.getScene().getWindow().setOnCloseRequest(e -> {
-                if (isModified()) {
-                    Alert alert = new Alert(AlertType.CONFIRMATION);
-                    alert.setHeaderText("Es wurden Änderungen vorgenommen.");
-                    alert.setContentText("Möchten Sie die Änderungen verwerfen?\n\n");
-                    ButtonType btnYes = new ButtonType("Ja");
-                    ButtonType btnCancel = new ButtonType("Abbrechen", ButtonData.CANCEL_CLOSE);
-                    alert.getButtonTypes().setAll(btnYes, btnCancel);
-                    alert.initStyle(StageStyle.TRANSPARENT);
-                    alert.initModality(Modality.WINDOW_MODAL);
-                    // alert.setWidth(250);
-                    alert.getDialogPane().setPrefWidth(240);
-                    alert.getDialogPane().setMaxWidth(240);
-                    alert.initOwner(txtTitle.getScene().getWindow());
-
-                    alert.getDialogPane().getScene().setFill(Color.TRANSPARENT);
-                    ((GridPane) alert.getDialogPane().getChildren().get(0)).setBackground(new Background(
-                            new BackgroundFill(Color.ALICEBLUE, new CornerRadii(10, 10, 0, 0, false), null)));
-                    alert.getDialogPane().setBorder(new Border(
-                            new BorderStroke(Color.GREY, BorderStrokeStyle.SOLID, new CornerRadii(10), null)));
-                    alert.getDialogPane()
-                            .setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(10), null)));
-                    Optional<ButtonType> result = alert.showAndWait();
-                    if (result.get() == btnCancel) {
-                        e.consume();
-                    }
-                }
-            });
-        });
-
+        System.out.println(javafx.scene.text.Font.getDefault());
+        //System.out.println(javafx.scene.text.Font.getFamilies());
+        btnContainer.setStyle(ToDoTestLoad.getColorScheme());
         txtDescription.addEventFilter(KeyEvent.KEY_PRESSED, new TextAreaTabToFocusEventHandler());
-        imgCreate = new Image(getClass().getResource("images/plus_big.png").toExternalForm());
-        imgEdit = new Image(getClass().getResource("images/edit_big.png").toExternalForm());
-        imgDelete = new Image(getClass().getResource("images/delete_big.png").toExternalForm());
-        imgCancel = new Image(getClass().getResource("images/cancel_big.png").toExternalForm());
-        ((ImageView) btnCreate.getChildren().get(0)).setImage(imgCreate);
-        ((ImageView) btnEdit.getChildren().get(0)).setImage(imgEdit);
-        ((ImageView) btnDelete.getChildren().get(0)).setImage(imgDelete);
-        ((ImageView) btnCancel.getChildren().get(0)).setImage(imgCancel);
         Tooltip.install(btnCreate, new Tooltip("Aufgabe erstellen"));
         Tooltip.install(btnEdit, new Tooltip("Änderungen speichern")); // TODO wird datum aktualisiert? user informieren
         Tooltip.install(btnDelete, new Tooltip("Aufgabe löschen"));
@@ -154,37 +114,29 @@ public class TaskController {
 
         btnCreate.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
-                createTask(null);
                 e.consume();
+                createTask(null);
             }
         });
         btnEdit.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
-                editTask(null);
                 e.consume();
+                editTask(null);
             }
         });
         btnDelete.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
-                deleteTask(null);
                 e.consume();
+                deleteTask(null);
             }
         });
         btnCancel.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
-                cancel(null);
                 e.consume();
+                cancel(null);
             }
         });
-        btnCancel.getStyleClass().add("dt-btn-active");
-        Platform.runLater(() -> {
-            btnCancel.getScene().setOnKeyPressed(e -> {
-                if (e.getCode() == KeyCode.ENTER) {
-                    Event.fireEvent(btnCancel, new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, null, 0, true, true, true, true, true, true, true, true, true, true, null));
-                    e.consume();
-                }
-            });
-        });
+        btnCancel.getStyleClass().add("btn-active");
 
         pickerDueDate.setConverter(new StringConverter<LocalDate>() {
             @Override
@@ -249,7 +201,7 @@ public class TaskController {
         pickerExecutionDate.focusedProperty().addListener((obj, oldVal, newVal) -> {
             if (!newVal) {
                 // pickerExecutionDate.setValue(pickerExecutionDate.getConverter().fromString(pickerExecutionDate.getEditor().getText()));
-                System.out.println("obs" + pickerExecutionDate.getValue());
+                System.out.println("obs " + pickerExecutionDate.getValue());
             }
         });
     }
@@ -280,15 +232,27 @@ public class TaskController {
             listContainer.addTask(txtTitle.getText(), txtDescription.getText(), optionalDueDate,
                     checkDueInCalendar.isSelected(), optionalExecutionDate, checkExecutionInCalendar.isSelected(),
                     optionalRepetitionIntervall, checkPriority.isSelected(), checkDailyList.isSelected());
-            closeWindow();
+            if (!fullscreen) {
+                closeWindow();
+            }
+        } else {
+            requestFocusTxtTitle();
         }
     }
 
     @FXML
     void deleteTask(MouseEvent event) {
-        // TODO warning
-        listContainer.removeTask(task);
-        cancel(null);
+        Alert alert = DefaultAlert.getStyledAlert("Aufgabe löschen", "Möchten Sie die Aufgabe '" + task.getTitle() + "' wirklich löschen?", txtTitle.getScene().getWindow());
+        alert.showAndWait().ifPresent(response -> {
+            if (response.getButtonData() == ButtonData.CANCEL_CLOSE) {
+
+            } else {
+                listContainer.removeTask(task);
+                if (!fullscreen) {
+                    closeWindow();
+                }
+            }
+        });
     }
 
     @FXML
@@ -309,20 +273,53 @@ public class TaskController {
             Optional<Period> optionalRepetitionIntervall = determinePeriod();
             if (optionalRepetitionIntervall.isPresent() && optionalDueDate.isEmpty()) {
                 optionalDueDate = Optional.of(LocalDate.now());
+                pickerDueDate.setValue(optionalDueDate.get());
             }
             System.out.println(optionalRepetitionIntervall + " " + optionalDueDate);
             listContainer.modifyTask(task, txtTitle.getText(), txtDescription.getText(), optionalDueDate,
                     checkDueInCalendar.isSelected(), optionalExecutionDate, checkExecutionInCalendar.isSelected(),
                     optionalRepetitionIntervall, checkPriority.isSelected(), checkDailyList.isSelected());
-            closeWindow();
+            if (!fullscreen) {
+                closeWindow();
+            }
         }
     }
 
-    void insertData(ToDoDecorator listContainer, Optional<Task> optionalTask) {
+    void insertData(ToDoDecorator listContainer) {
         this.listContainer = listContainer;
-        if (optionalTask.isPresent()) {
-            ((HBox) btnCreate.getParent()).getChildren().remove(btnCreate);
-            task = optionalTask.get();
+        listContainer.addListener(this);
+        if (!fullscreen) {
+            Platform.runLater(() -> {
+                btnCancel.getScene().setOnKeyPressed(e -> {
+                    if (e.getCode() == KeyCode.ENTER) {
+                        e.consume();
+                        Event.fireEvent(btnCancel, new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, null, 0, true, true, true, true, true, true, true, true, true, true, null));
+                    }
+                });
+                txtTitle.getScene().getWindow().setOnCloseRequest(e -> {
+                    if (isModified()) {
+                        showChangeAlert(e);
+                    }
+                });
+            });
+        }
+        update(null);       //TODO define UpdateEvent
+    }
+
+    void setFullscreenMode(boolean fullscreen) {
+        this.fullscreen = fullscreen;
+        if (fullscreen) {
+            ((VBox)btnContainer.getParent()).getChildren().remove(btnContainer);
+            rootPane.getStyleClass().remove("cont-default-border");
+        }
+    }
+
+    @Override
+    public void update(UpdateEvent event) {
+        resetTaskData();
+        if (listContainer.getSelectedTask().isPresent()) {
+            btnContainer.getChildren().remove(btnCreate);
+            task = listContainer.getSelectedTask().get();
             txtTitle.setText(task.getTitle());
             txtDescription.setText(task.getDescription());
             task.getDueDate().ifPresent(dueDate -> pickerDueDate.setValue(dueDate));
@@ -334,12 +331,27 @@ public class TaskController {
             checkPriority.setSelected(task.isPriority());
             checkDailyList.setSelected(task.isInDailyList());
         } else {
-            ((HBox) btnEdit.getParent()).getChildren().remove(btnEdit);
-            ((HBox) btnDelete.getParent()).getChildren().remove(btnDelete);
+            btnContainer.getChildren().remove(btnEdit);
+            btnContainer.getChildren().remove(btnDelete);
         }
     }
 
-    private boolean isModified() {
+    private void resetTaskData() {
+            task = null;
+            txtTitle.clear();
+            txtDescription.clear();
+            pickerDueDate.setValue(null);
+            System.out.println(pickerDueDate.getValue() + " due date");
+            checkDueInCalendar.setSelected(false);
+            pickerExecutionDate.setValue(null);
+            checkExecutionInCalendar.setSelected(false);
+            txtRepetition.clear();
+            choiceBoxRepetitionUnit.setValue(choiceBoxRepetitionUnit.getItems().get(0));
+            checkPriority.setSelected(false);
+            checkDailyList.setSelected(false);
+    }
+
+    boolean isModified() {
         if (task != null) {
             if (!txtTitle.getText().equals(task.getTitle()))
                 return true;
@@ -365,8 +377,10 @@ public class TaskController {
                 return true;
             if (checkDailyList.isSelected() != task.isInDailyList())
                 return true;
-        } else if (!txtTitle.getText().isBlank())
+        } else if (!txtTitle.getText().isBlank() || !txtDescription.getText().isBlank() || pickerDueDate.getValue() != null || pickerExecutionDate.getValue() != null) {
+            System.out.println(pickerDueDate.getValue() +"pick");
             return true;
+        }
         return false;
     }
 
@@ -405,6 +419,32 @@ public class TaskController {
                 choiceBoxRepetitionUnit.setValue(choiceBoxRepetitionUnit.getItems().get(3));
             }
         }
+    }
+
+    /**
+     * 
+     * @param event
+     * @return true if modification should be dropped, false if cancel drop of modification
+     */
+    boolean showChangeAlert(WindowEvent event) {
+        Alert alert = DefaultAlert.getStyledAlert("Es wurden Änderungen vorgenommen.", "Möchten Sie die Änderungen verwerfen?", txtTitle.getScene().getWindow());
+        Optional<ButtonType> response = alert.showAndWait();
+        if (response.isPresent()) {
+            if (response.get().getButtonData() == ButtonData.CANCEL_CLOSE) {
+                if (fullscreen) {
+                    return false;
+                } else {
+                    event.consume();
+                }
+            }
+            return true;
+        };
+        return true;
+    }
+
+    void requestFocusTxtTitle() {
+        txtTitle.requestFocus();
+        txtTitle.positionCaret(txtTitle.getLength());
     }
 
 }

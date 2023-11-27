@@ -15,9 +15,12 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Toggle;
@@ -29,22 +32,19 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import pm3.hs23.it22a_win.team1.dashboard.WidgetController;
+import pm3.hs23.it22a_win.team1.dashboard.WidgetData;
+import pm3.hs23.it22a_win.team1.dashboard.WidgetModels;
+import pm3.hs23.it22a_win.team1.dashboard.gradecalculator.GradeCalculatorSmallController;
+import pm3.hs23.it22a_win.team1.dashboard.todo.ToDoTestLoad;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import pm3.hs23.it22a_win.team1.dashboard.todo.model.SortingType;
@@ -53,9 +53,9 @@ import pm3.hs23.it22a_win.team1.dashboard.todo.model.Task;
 /**
  *
  * @author elmiglor
- * @version 2023-10-27
+ * @version 2023-11-12
  */
-public class ToDoBigController implements IsObserver {
+public class ToDoBigController implements IsObserver, WidgetController {
 
     @FXML
     private ComboBox<String> comboBoxListSelector;
@@ -64,10 +64,16 @@ public class ToDoBigController implements IsObserver {
     private Label lblOrderBy;
 
     @FXML
+    private AnchorPane rootPane;
+
+    @FXML
     private ScrollPane scrollContainer;
 
     @FXML
     private VBox taskContainer;
+
+    @FXML
+    private MenuButton settingsMenu;
 
     @FXML
     private Menu sortingMenu;
@@ -79,7 +85,7 @@ public class ToDoBigController implements IsObserver {
     private HBox taskToBeDragged;
     private int originalIndexOfDraggedTask;
     private Task draggedTask;
-    private DataFormat HBOX_TYPE = new DataFormat("hbox");
+    //private DataFormat HBOX_TYPE = new DataFormat("hbox");
     private Image imgPlus;
     private Image imgPriority;
     private Image imgDone;
@@ -87,9 +93,26 @@ public class ToDoBigController implements IsObserver {
 
     private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private ToDoDecorator listContainer;
+    private boolean fullscreen = false;
+
+
+    public Pane loadModelNode(WidgetData widgetData) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/pm3/hs23/it22a_win/team1/dashboard/todo/gui/ToDoBig.fxml"));
+            Pane root = fxmlLoader.load();
+
+            ToDoBigController controller = fxmlLoader.getController();
+            controller.setModel(widgetData);
+            return root;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     @FXML
     void initialize() {
+        rootPane.setStyle(ToDoTestLoad.getColorScheme() + " -fx-background-color: white; -fx-border-color: black; -fx-border-radius: 10");
         for(SortingType type : SortingType.values()) {
             RadioMenuItem radioMenuItem = new RadioMenuItem(type.getCaption());
             radioMenuItem.setOnAction(e -> sortTasks(e));
@@ -103,11 +126,17 @@ public class ToDoBigController implements IsObserver {
         imgDailyList = new Image(getClass().getResource("images/add_daily_list_big.png").toExternalForm());
 
         atHboxAdd = new HBox();
-        atHboxAdd.getStyleClass().add("at-hbox-add");
+        atHboxAdd.setFocusTraversable(true);
+        atHboxAdd.getStyleClass().addAll("hbox-task", "at-hbox-add");
         //atHboxAdd.setOnMouseClicked(e->addNewTask(new ActionEvent()));
         atHboxAdd.setOnMouseClicked(e -> addNewTask());
+        atHboxAdd.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                addNewTask();
+            }
+        });
         StackPane atStackPanePlus = new StackPane();
-        atStackPanePlus.getStyleClass().addAll("dt-stackpane-done", "dt-btn-default");
+        atStackPanePlus.getStyleClass().addAll( "btn-default", "btn-task");
         ImageView atImgPlus = new ImageView(imgPlus);
         atImgPlus.setFitHeight(ICON_SIZE);
         atImgPlus.setFitWidth(ICON_SIZE);
@@ -118,16 +147,17 @@ public class ToDoBigController implements IsObserver {
     }
 
     void addNewTask() {
-        openTaskWindow(Optional.empty());
+        listContainer.setSelectedTask(Optional.empty());
+        openTaskWindow();
     }
 
-    private void openTaskWindow(Optional<Task> task) {
+    private void openTaskWindow() {
         String taskView = "Task.fxml";
         FXMLLoader loader = new FXMLLoader(getClass().getResource(taskView));
         Parent loadScreen;
         try {
             loadScreen = (Parent) loader.load();
-            ((TaskController)loader.getController()).insertData(listContainer, task);
+            ((TaskController)loader.getController()).insertData(listContainer);
             Scene scene = new Scene(loadScreen);
             Stage stage = new Stage();
             stage.initModality(Modality.WINDOW_MODAL);
@@ -137,10 +167,11 @@ public class ToDoBigController implements IsObserver {
             stage.setTitle("Test - ToDo");
             stage.setResizable(false);
             stage.getIcons().add(new Image(getClass().getResource("images/plus_big.png").toExternalForm()));
-            Window root = taskContainer.getScene().getWindow();
             Platform.runLater(() -> {
-                stage.setX(root.getX()+(root.getWidth()-stage.getWidth())/2);
-                stage.setY(root.getY()+(root.getHeight()-stage.getHeight())/2);
+                Window mainStage = rootPane.getScene().getWindow();
+                stage.setX(mainStage.getX() + (mainStage.getWidth()-rootPane.getScene().getWidth())/2 + rootPane.getLocalToSceneTransform().getTx() + (rootPane.getWidth()-stage.getWidth())/2.);
+                stage.setY(mainStage.getY() + (mainStage.getHeight()-rootPane.getScene().getHeight())/2 + rootPane.getLocalToSceneTransform().getTy() + (rootPane.getHeight()-stage.getHeight())/2.);
+                ((TaskController)loader.getController()).requestFocusTxtTitle();
             });
             stage.show();
         } catch (IOException e1) {
@@ -151,8 +182,12 @@ public class ToDoBigController implements IsObserver {
 
     @FXML
     void deleteList(ActionEvent event) {
-        listContainer.removeList(listContainer.getNameSelectedList());
-        //refreshCbListSelector(); //TODO triggers change with null, null check(!)
+        Alert alert = DefaultAlert.getStyledAlert("To-Do-Liste löschen", "Möchten Sie die Liste '" + listContainer.getNameSelectedList() + "' mit den darin enthaltenen Aufgaben wirklich löschen?", taskContainer.getScene().getWindow());
+        Optional<ButtonType> response = alert.showAndWait();
+        if (response.get() == alert.getButtonTypes().get(0)) {
+            listContainer.removeList(listContainer.getNameSelectedList());
+            //refreshCbListSelector(); //TODO triggers change with null, null check(!)
+        }
     }
 
     @FXML
@@ -171,22 +206,20 @@ public class ToDoBigController implements IsObserver {
                 Platform.runLater(()-> {
                     comboBoxListSelector.getEditor().clear();
                 });
-            } else {
+            } else if (comboBoxListSelector.isEditable()) {
                 comboBoxListSelector.setEditable(false);
                 comboBoxListSelector.getEditor().setBorder(null);
-                if (listContainer.addNewList(comboBoxListSelector.getValue())) {
-                    listContainer.setNameSelectedList(comboBoxListSelector.getValue()); //TODO Model oder controller?
-                } else {
+                if (!listContainer.addNewList(comboBoxListSelector.getValue())) {
                     comboBoxListSelector.getEditor().setBorder(new Border(new BorderStroke(Color.rgb(255,0,0), BorderStrokeStyle.SOLID,null, BorderWidths.DEFAULT)));
                     comboBoxListSelector.getSelectionModel().select(CREATE_NEW_LIST);
                 }
 
             }
         } else {
-                comboBoxListSelector.setEditable(false);
+                comboBoxListSelector.setEditable(false); //TODO remove? as it is also set in line-21
                 comboBoxListSelector.getSelectionModel().select(listContainer.getNameSelectedList());
                 System.out.println("got here");
-                update(UpdateEvent.UPDATE_TASKS); //TODO remove?
+                //update(UpdateEvent.UPDATE_TASKS); //TODO remove?
         }
     }
 
@@ -200,7 +233,7 @@ public class ToDoBigController implements IsObserver {
             Dragboard db = taskToBeDragged.startDragAndDrop(TransferMode.MOVE);
             //db.setDragView(((HBox)event.getSource()).snapshot(null,null));
             ClipboardContent content = new ClipboardContent();
-            content.put(HBOX_TYPE, taskToBeDragged.toString());
+            content.put(DataFormat.PLAIN_TEXT, taskToBeDragged.toString());
             db.setContent(content);
             event.consume();
         }
@@ -233,10 +266,15 @@ public class ToDoBigController implements IsObserver {
         event.consume();
     }
 
+    Task getDraggedTask() {
+        return draggedTask;
+    }
+
     @Override
     public void update(UpdateEvent updateEvent) {
         if(updateEvent == UpdateEvent.UPDATE_LIST) {
-            refreshCbListSelector();
+            //refreshCbListSelector();
+            updateListOfTaskLists();
         }
 
         for (Toggle toggle : sortingGroup.getToggles()) {
@@ -244,43 +282,91 @@ public class ToDoBigController implements IsObserver {
                 toggle.setSelected(true);
             }
         }
+        settingsMenu.setText(listContainer.getCurrentSorting().getCaption());
         lblOrderBy.setText(listContainer.getCurrentSorting().getInUseLabel());
 
         taskContainer.getChildren().clear();
         for (Task task : listContainer.getAllTasks()) {
             generateTask(task);
         }
-        taskContainer.getChildren().add(atHboxAdd);
+        if (!fullscreen) {
+            taskContainer.getChildren().add(atHboxAdd);
+        }
     }
 
-    public void setModel(ToDoDecorator listContainer) {
-        this.listContainer = listContainer;
-        listContainer.addListener(this);
+    @Override
+    public void setModel(WidgetData listContainer) {
+        this.listContainer = (ToDoDecorator) listContainer;
+        this.listContainer.addListener(this);
 
+        comboBoxListSelector.getItems().addAll(FXCollections.observableList(this.listContainer.getNamesAllLists()));
         comboBoxListSelector.getItems().add(CREATE_NEW_LIST);
         comboBoxListSelector.focusedProperty().addListener((obs, oldValue, newValue) -> {
             if (!newValue && comboBoxListSelector.isEditable()) {
-                refreshCbListSelector();
+                System.out.println("whatyadoinhere");
+                comboBoxListSelector.getSelectionModel().select(this.listContainer.getNameSelectedList());
             }
         });
         update(UpdateEvent.UPDATE_LIST);
     }
 
+    @Override
+    public WidgetModels getModelType() {
+        //TODO implement method
+        return null;
+    }
+
+    void setFullscreenMode(boolean fullscreen) {
+        this.fullscreen = fullscreen;
+        if (fullscreen) {
+            ((VBox)rootPane.getChildren().get(0)).getChildren().remove(0);
+        }
+    }
+
+
+    private void updateListOfTaskLists() {
+        if (listContainer.getNamesAllLists().size() == comboBoxListSelector.getItems().size()-1) {
+            comboBoxListSelector.getSelectionModel().select(listContainer.getNameSelectedList());
+        } else if (listContainer.getNamesAllLists().size() < comboBoxListSelector.getItems().size()-1) {
+            comboBoxListSelector.getSelectionModel().select(listContainer.getNameSelectedList());
+            System.out.println("tried to remove sosing");
+            comboBoxListSelector.getItems().removeIf(x -> !listContainer.getNamesAllLists().contains(x) && !CREATE_NEW_LIST.equals(x));
+        } else {
+            int indexData = 0;
+            for (indexData = 0; indexData < listContainer.getNamesAllLists().size()-1; indexData++) {
+                if (!listContainer.getNamesAllLists().get(indexData).equals(comboBoxListSelector.getItems().get(indexData))) {
+                    break;
+                }
+            }
+            comboBoxListSelector.getSelectionModel().select("cR4zYL|$tNo80dIeVrNtrs");
+            System.out.println("tried to add "+listContainer.getNameSelectedList()+indexData);
+            comboBoxListSelector.getItems().add(indexData, listContainer.getNamesAllLists().get(indexData));
+            comboBoxListSelector.getSelectionModel().select(listContainer.getNameSelectedList());
+        }
+    }
+
+
+
     private void refreshCbListSelector() {
         ObservableList<String> allTaskLists = FXCollections.observableArrayList(listContainer.getNamesAllLists());
 
-        comboBoxListSelector.getSelectionModel().select(CREATE_NEW_LIST); //TODO alt add dummy entry and remove after manipulation
-        System.out.println(comboBoxListSelector.getSelectionModel().getSelectedItem());
+        String dummy = "cR4zYL|$tNo80dIeVrNtrs";
+        comboBoxListSelector.getItems().add(dummy);
+
+        comboBoxListSelector.getSelectionModel().select(dummy); //TODO alt add dummy entry and remove after manipulation
+        System.out.println("show whats selected"+comboBoxListSelector.getSelectionModel().getSelectedItem());
 
         Platform.runLater(() -> {
-            comboBoxListSelector.getItems().removeIf(x -> !CREATE_NEW_LIST.equals(x));
+            comboBoxListSelector.getItems().removeIf(x -> !dummy.equals(x));
             System.out.println("removed tasklists");
 
             comboBoxListSelector.getItems().addAll(0, allTaskLists);
+            comboBoxListSelector.getItems().add(CREATE_NEW_LIST);
             System.out.println("added tasklists");
 
             comboBoxListSelector.getSelectionModel().select(listContainer.getNameSelectedList());
             System.out.println("reselected active list: "+comboBoxListSelector.getSelectionModel().getSelectedItem());
+            comboBoxListSelector.getItems().removeIf(x -> dummy.equals(x));
         });
     }
 
@@ -302,11 +388,11 @@ public class ToDoBigController implements IsObserver {
         StackPane dtStackPaneAddDailyList = generateDtStackPaneAddDailyList(task);
 
         if (task.isDone()) {
-            dtStackPaneDone.getStyleClass().add("dt-btn-active");
+            dtStackPaneDone.getStyleClass().add("btn-active");
             dtLblTask.getStyleClass().add("dt-lbl-done");
             dtLblSorting.getStyleClass().add("dt-lbl-done");
         } else {
-            dtStackPaneDone.getStyleClass().remove("dt-btn-active");
+            dtStackPaneDone.getStyleClass().remove("btn-active");
             dtLblTask.getStyleClass().remove("dt-lbl-done");
             dtLblSorting.getStyleClass().remove("dt-lbl-done");
         }
@@ -318,15 +404,16 @@ public class ToDoBigController implements IsObserver {
 
     private HBox generateDtHbox(Task task) {
         HBox dtHboxBase = new HBox();
-        dtHboxBase.getStyleClass().add("dt-hbox-base");
+        dtHboxBase.getStyleClass().addAll("hbox-task", "dt-hbox-base");
         dtHboxBase.setOnDragDetected(e -> moveTask(e, task));
         dtHboxBase.setOnDragDone(e -> {
-            if (!e.isAccepted() || taskToBeDragged != null) {
+            if (!e.isAccepted()) { //|| taskToBeDragged != null) { //TODO check if this doesnt fail in the widget
                 System.out.println("dropped outside container, task reset");
                 taskContainer.getChildren().remove(taskToBeDragged);
                 taskContainer.getChildren().add(originalIndexOfDraggedTask, taskToBeDragged);
                 taskToBeDragged = null;
             } else {
+                taskToBeDragged = null;
                 System.out.println("task successfully moved");
             }
             e.consume();
@@ -363,17 +450,23 @@ public class ToDoBigController implements IsObserver {
         dtHboxBase.setOnDragDropped(e -> taskDropped(e));
 
         dtHboxBase.setOnMouseClicked(e -> {
-            if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2) {
+            if (!fullscreen && e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2) {
                 System.out.println("Show details");
-                openTaskWindow(Optional.of(task));
+                listContainer.setSelectedTask(Optional.of(task));
+                openTaskWindow();
+            } else if (fullscreen && e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 1) {
+                listContainer.setSelectedTask(Optional.of(task));
             }
         });
+        if (listContainer.getSelectedTask().isPresent() && listContainer.getSelectedTask().get() == task) {
+            dtHboxBase.setId("btn-active");
+        }
         return dtHboxBase;
     }
 
     private StackPane generateDtStackPanePriority(Task task) {
         StackPane dtStackPanePriority = new StackPane();
-        dtStackPanePriority.getStyleClass().addAll("dt-btn-default", "dt-stackpane-priority");
+        dtStackPanePriority.getStyleClass().addAll("btn-default", "btn-task", "dt-stackpane-priority");
         ImageView dtImgPriority = new ImageView();
         dtImgPriority.setFitHeight(ICON_SIZE);
         dtImgPriority.setFitWidth(ICON_SIZE);
@@ -393,7 +486,7 @@ public class ToDoBigController implements IsObserver {
 
     private StackPane generateDtStackPaneDone(Task task) {
         StackPane dtStackPaneDone = new StackPane();
-        dtStackPaneDone.getStyleClass().add("dt-btn-default");
+        dtStackPaneDone.getStyleClass().addAll("btn-default", "btn-task");
         ImageView dtImgDone = new ImageView(imgDone);
         dtImgDone.setFitHeight(ICON_SIZE);
         dtImgDone.setFitWidth(ICON_SIZE);
@@ -408,11 +501,11 @@ public class ToDoBigController implements IsObserver {
 
     private StackPane generateDtStackPaneAddDailyList(Task task) {
         StackPane dtStackPaneAddDailyList = new StackPane();
-        dtStackPaneAddDailyList.getStyleClass().add("dt-btn-default");
+        dtStackPaneAddDailyList.getStyleClass().addAll("btn-default", "btn-task");
         if (task.isInDailyList()) {
-            dtStackPaneAddDailyList.getStyleClass().add("dt-btn-active");
+            dtStackPaneAddDailyList.getStyleClass().add("btn-active");
         } else {
-            dtStackPaneAddDailyList.getStyleClass().remove("dt-btn-active");
+            dtStackPaneAddDailyList.getStyleClass().remove("btn-active");
         }
         ImageView dtImgAddDailyList = new ImageView(imgDailyList);
         dtImgAddDailyList.setFitHeight(ICON_SIZE);
@@ -420,7 +513,10 @@ public class ToDoBigController implements IsObserver {
         //dtImgAddDailyList.getStyleClass().add("dt-img-add-daily-list");
         dtStackPaneAddDailyList.getChildren().add(dtImgAddDailyList);
         Tooltip.install(dtStackPaneAddDailyList, new Tooltip("zur Tages-Liste hinzufügen"));
-        dtStackPaneAddDailyList.setOnMouseClicked(e-> listContainer.toggleTaskInDailyList(task));
+        dtStackPaneAddDailyList.setOnMouseClicked(e-> {
+            e.consume();
+            listContainer.toggleTaskInDailyList(task);
+        });
         return dtStackPaneAddDailyList;
     }
 

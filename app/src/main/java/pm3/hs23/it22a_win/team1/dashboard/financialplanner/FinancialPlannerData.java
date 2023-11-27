@@ -1,43 +1,95 @@
 package pm3.hs23.it22a_win.team1.dashboard.financialplanner;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
 import pm3.hs23.it22a_win.team1.dashboard.financialplanner.FinancialItem.Frequency;
 
+import java.util.Objects;
+
+/**
+ * The {@code FinancialPlannerData} class represents the data of the financial
+ * planner.
+ * It contains a list of financial items and the initial balance.
+ *
+ * @author Besart Morina
+ * @version 24.11.2023
+ */
 public class FinancialPlannerData {
-    private List<FinancialItem> financialItems;
+    private final ListProperty<FinancialItem> financialItems;
     private BigDecimal initialBalance;
-    private final String EXPENSE = "Expense";
-    private final String INCOME = "Income";
-    private final String ONETIMETRANSACTION = "OneTimeTransaction";
 
     public FinancialPlannerData() {
-        this.financialItems = new ArrayList<>();
+        this.financialItems = new SimpleListProperty<>(FXCollections.observableArrayList(new ArrayList<>()));
         this.initialBalance = BigDecimal.ZERO;
+        Expense expense = new Expense("Ausgabe 1", new BigDecimal("50"), Frequency.DAILY, LocalDate.now(),
+            LocalDate.now().plusDays(30));
+        Expense expense1 = new Expense("Ausgabe 1", new BigDecimal("45.67"), Frequency.DAILY, LocalDate.now(),
+            LocalDate.now().plusDays(30));
+        financialItems.add(expense1);
+        financialItems.add(expense);
     }
 
-    public BigDecimal calculateBalanceForMonth(int year, int month) {
+    /**
+     * Calculates the balance for a given timeline.
+     *
+     * @param frequency the frequency of the balance
+     * @param startDate the start date of the timeline
+     * @param endDate   the end date of the timeline
+     * @return a list of balances for the given timeline
+     */
+    public List<BigDecimal> calculateBalanceForTimeline(Frequency frequency, LocalDate startDate, LocalDate endDate) {
+        List<BigDecimal> balances = new ArrayList<>();
         BigDecimal balance = initialBalance;
 
-        for (FinancialItem item : financialItems) {
-            BigDecimal itemAmountForMonth = item.calculateAmountForMonth(year, month);
-            if (item instanceof Expense) {
-                balance = balance.subtract(itemAmountForMonth);
-            } else if (item instanceof Income ) {
-                balance = balance.add(itemAmountForMonth);
-            }
+        if (frequency == null) {
+            frequency = Frequency.MONTHLY;
         }
-        return balance;
+
+        LocalDate date;
+        if (startDate == null) {
+            date = LocalDate.now();
+        } else {
+            date = startDate;
+        }
+
+        LocalDate dateEnd;
+        if (endDate == null) {
+            dateEnd = LocalDate.now().plusDays(30);
+        } else {
+            dateEnd = endDate;
+        }
+
+        while (!date.isAfter(dateEnd)) {
+            for (FinancialItem item : financialItems) {
+                if (item instanceof Expense) {
+                    balance = balance.subtract(item.getAmountInFreq(frequency));
+                } else if (item instanceof Income) {
+                    balance = balance.add(item.getAmountInFreq(frequency));
+                }
+            }
+            balances.add(balance);
+            date = date.plusDays(1);
+        }
+        return balances;
     }
 
+    /**
+     * Adds a financial item to the list of financial items.
+     *
+     * @param item
+     */
     public void addFinancialItem(FinancialItem item) {
+        Objects.requireNonNull(item);
         financialItems.add(item);
     }
 
-    public List<FinancialItem> getFinancialItems() {
+    public ListProperty<FinancialItem> getFinancialItems() {
         return financialItems;
     }
 
@@ -45,30 +97,69 @@ public class FinancialPlannerData {
         return initialBalance;
     }
 
+    /**
+     * Sets the initial balance.
+     *
+     * @param initialBalance the initial balance
+     */
     public void setInitialBalance(BigDecimal initialBalance) {
+        Objects.requireNonNull(initialBalance);
+
         this.initialBalance = initialBalance;
     }
 
-    public List<FinancialItem> getListOfType(Class<? extends FinancialItem> type) {
-        return financialItems.stream()
-            .filter(type::isInstance)
-            .map(type::cast)
-            .collect(Collectors.toList());
+    /**
+     * Removes all financial item from the list of financial items.
+     *
+     * @param selectedItems the financial item to remove
+     */
+    public void removeAllFinancialItems(List<FinancialItem> selectedItems) {
+        Objects.requireNonNull(selectedItems);
+        financialItems.removeAll(selectedItems);
     }
 
-    public void removeFinancialItem(FinancialItem selectedItem) {
+    /**
+     * Returns a list of all the incomes.
+     *
+     * @return a list of all the incomes
+     */
+    public List<FinancialItem> getListOfIncome() {
+        ArrayList<FinancialItem> incomes = new ArrayList<>();
+        for (FinancialItem item : financialItems) {
+            if (item instanceof Income) {
+                incomes.add(item);
+            }
+        }
+        return incomes;
     }
 
-    public FinancialItem getListOfIncome() {
-
-        return null;
+    /**
+     * Returns a list of all the expenses.
+     *
+     * @return a list of all the expenses
+     */
+    public List<FinancialItem> getListOfExpense() {
+        ArrayList<FinancialItem> expenses = new ArrayList<>();
+        for (FinancialItem item : financialItems) {
+            if (item instanceof Expense) {
+                expenses.add(item);
+            }
+        }
+        return expenses;
     }
 
-    public FinancialItem getListOfExpense() {
-        return null;
-    }
-
-    public FinancialItem getListOfTransaction() {
-        return null;
+    /**
+     * Returns a list of all the one time transactions.
+     *
+     * @return a list of all the one time transactions
+     */
+    public List<FinancialItem> getListOfTransaction() {
+        ArrayList<FinancialItem> transactions = new ArrayList<>();
+        for (FinancialItem item : financialItems) {
+            if (item instanceof OneTimeTransaction) {
+                transactions.add(item);
+            }
+        }
+        return transactions;
     }
 }
