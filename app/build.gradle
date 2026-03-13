@@ -8,7 +8,8 @@
 plugins {
   id 'java'
   id 'application'
-  id 'org.openjfx.javafxplugin' version '0.0.13'
+  id 'org.openjfx.javafxplugin' version '0.1.0'
+  id 'checkstyle'
 }
 
 repositories {
@@ -20,9 +21,6 @@ ext {
   junitVersion = '5.9.1'
 }
 
-sourceCompatibility = '17'
-targetCompatibility = '17'
-
 dependencies {
   testImplementation 'org.junit.jupiter:junit-jupiter-api:' + junitVersion
   testImplementation 'org.junit.jupiter:junit-jupiter-params:' + junitVersion
@@ -31,6 +29,11 @@ dependencies {
 
   // JUnit Jupiter Engine for testing
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:' + junitVersion
+  // Required explicitly in Gradle 9+
+  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+  // Null-safety annotations (@Nullable, @NotNull, etc.) — compile-time only
+  compileOnly 'org.jetbrains:annotations:24.1.0'
 
   // This dependency is used by the application.
   implementation 'com.google.guava:guava:32.1.1-jre'
@@ -68,13 +71,12 @@ javafx {
 }
 
 java {
-  sourceCompatibility = JavaVersion.VERSION_17 // ensure Java source code compatibility
-  // targetCompatibility = JavaVersion.VERSION_17 // version of the created byte-code
+  sourceCompatibility = JavaVersion.VERSION_17
+  targetCompatibility = JavaVersion.VERSION_17
+}
 
-  compileJava {
-    options.encoding = 'UTF-8' // source files should be UTF-8 encoded
-    // for more options see https://docs.gradle.org/current/dsl/org.gradle.api.tasks.compile.CompileOptions.html
-  }
+tasks.named('compileJava') {
+  options.encoding = 'UTF-8'
 }
 
 application {
@@ -85,4 +87,12 @@ application {
 tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+}
+
+checkstyle {
+  toolVersion = '10.20.2'
+  configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
+  // Reports violations but does not fail the build (good for existing codebases).
+  // Set to false to enforce strict linting.
+  ignoreFailures = true
 }

@@ -25,18 +25,13 @@ public class DashboardController {
 
     @FXML
     private GridPane gridPane;
-
-    private final List<WidgetWrapper> widgetWrappers = new ArrayList<>();
-
     private Pane draggedWidget;
-
     private Map<Class, WidgetData> widgetModels;
-
-    JsonHelper jsonHelper = new JsonHelper();
+    private final JsonHelper jsonHelper = new JsonHelper();
+    private final List<WidgetWrapper> widgetWrappers = new ArrayList<>();
 
     @FXML
     private void initialize() {
-
         createGridPane();
         System.out.println("Initialized");
     }
