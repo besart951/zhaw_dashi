@@ -53,7 +53,8 @@ public class DashboardController {
 
     private void loadCustomGridWidgetsLayout() {
         try {
-            Map<WidgetType, GridPosition> gridWidgetsLayout = jsonHelper.loadObjectFromJsonFile(new TypeReference<>() {}, new File("src/main/resources/pm3/hs23/it22a_win/team1/dashboard/Data/DashboardGridLayout.json"), false);
+            Map<WidgetType, GridPosition> gridWidgetsLayout = jsonHelper.loadObjectFromJsonFile(new TypeReference<>() {
+            }, new File("src/main/resources/pm3/hs23/it22a_win/team1/dashboard/Data/DashboardGridLayout.json"), false);
             gridWidgetsLayout.forEach((widgetType, gridPosition) -> {
                 try {
                     Pane widget = loadWidget(widgetType);
